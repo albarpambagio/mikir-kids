@@ -317,6 +317,7 @@ mikir-kids/
 │   ├── tech stack and project setup.md
 │   ├── ui plan.md
 │   ├── UI Execution Plan.md
+│   ├── SETUP_GUIDE.md
 │   └── Project Overview & Status.md (this file)
 │
 ├── frontend/                    # React + Vite app

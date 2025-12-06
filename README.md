@@ -4,7 +4,7 @@ A focused web app for Indonesian students to practice UN-style math questions us
 
 ## 🚀 Quick Start
 
-1. **Read the Setup Guide**: See [SETUP_GUIDE.md](./SETUP_GUIDE.md) for complete setup instructions
+1. **Read the Setup Guide**: See [docs/SETUP_GUIDE.md](./docs/SETUP_GUIDE.md) for complete setup instructions
 2. **Set up Supabase**: Create project and run migrations (see `database/SETUP_INSTRUCTIONS.md`)
 3. **Configure Environment**: Copy `.env.example` files and fill in your credentials
 4. **Install Dependencies**: 
@@ -41,6 +41,8 @@ mikir kids/
 │
 └── docs/             # Documentation
     ├── PRD – Math Deliberate Practice MVP.md
+    ├── Project Overview & Status.md
+    ├── SETUP_GUIDE.md
     ├── tech stack and project setup.md
     ├── ui plan.md
     └── UI Execution Plan.md
@@ -48,12 +50,12 @@ mikir kids/
 
 ## 📚 Documentation
 
-- **[Project Overview & Status](./Project Overview & Status.md)** - Current status and progress
-- **[PRD](./PRD – Math Deliberate Practice MVP.md)** - Product requirements
-- **[Tech Stack](./tech stack and project setup.md)** - Technical architecture
-- **[UI Plan](./ui plan.md)** - UI/UX designs
-- **[UI Execution Plan](./UI Execution Plan.md)** - Implementation guide
-- **[Setup Guide](./SETUP_GUIDE.md)** - Complete setup instructions
+- **[Project Overview & Status](./docs/Project%20Overview%20&%20Status.md)** - Current status and progress
+- **[PRD](./docs/PRD%20–%20Math%20Deliberate%20Practice%20MVP.md)** - Product requirements
+- **[Tech Stack](./docs/tech%20stack%20and%20project%20setup.md)** - Technical architecture
+- **[UI Plan](./docs/ui%20plan.md)** - UI/UX designs
+- **[UI Execution Plan](./docs/UI%20Execution%20Plan.md)** - Implementation guide
+- **[Setup Guide](./docs/SETUP_GUIDE.md)** - Complete setup instructions
 
 ## 🛠️ Tech Stack
 
@@ -86,7 +88,7 @@ mikir kids/
 
 **Next: Phase 2** - Authentication & Onboarding UI
 
-See [Project Overview & Status](./Project Overview & Status.md) for detailed progress.
+See [Project Overview & Status](./docs/Project%20Overview%20&%20Status.md) for detailed progress.
 
 ## 🧪 Testing
 
@@ -136,11 +138,7 @@ VITE_DEFAULT_SESSION_SIZE=15
 
 ## 🐛 Troubleshooting
 
-See [SETUP_GUIDE.md](./SETUP_GUIDE.md) for common issues and solutions.
-
-## 📄 License
-
-Personal/fun project - no license needed.
+See [docs/SETUP_GUIDE.md](./docs/SETUP_GUIDE.md) for common issues and solutions.
 
 ---
 
