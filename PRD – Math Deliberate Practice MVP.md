@@ -78,7 +78,7 @@ Since this is a fun project, success means:
 ### ✅ In Scope (MVP)
 
 - Topic-based question selection
-- Question types: Multiple choice + simple numeric input
+- Question types: Multiple choice (MCQ) only
 - Session results showing correct/incorrect answers
 - FSRS scheduling per user per question
 - Basic session history (list of past sessions)
@@ -333,11 +333,10 @@ question {
   prompt_text: string
   prompt_image_url: string | null
 
-  // Answer (one of these will be set)
-  type: "mcq" | "numeric"
-  options: string[] | null  // ["A) 2", "B) 3", ...] for MCQ
-  correct_option: string | null  // "A" for MCQ
-  correct_value: number | null  // 3.14 for numeric
+  // Answer (MCQ only)
+  type: "mcq"
+  options: string[]  // ["A) 2", "B) 3", ...] for MCQ
+  correct_option: string  // "A" for MCQ
 
   // Optional
   explanation_text: string | null
@@ -352,7 +351,6 @@ question {
 **Answer validation**:
 
 - **MCQ**: Exact match (case-insensitive)
-- **Numeric**: Tolerance of ±0.01 (configurable per question)
 
 ---
 
@@ -539,9 +537,10 @@ Content-Type: application/json
     {
       "id": "q_002",
       "sequence": 2,
-      "type": "numeric",
+      "type": "mcq",
       "prompt_text": "Jika 3x + 2y = 18 dan x = 4, berapakah nilai y?",
-      "prompt_image_url": null
+      "prompt_image_url": null,
+      "options": ["A) 1", "B) 2", "C) 3", "D) 4"]
     }
     // ... 13 more questions
   ]
@@ -643,8 +642,8 @@ GET /api/sessions/{session_id}/summary?user_id=12345678
       "id": "q_002", 
       "sequence": 2,
       "is_correct": true,
-      "user_answer": "3",
-      "correct_answer": "3"
+      "user_answer": "C",
+      "correct_answer": "C"
     },
     {
       "id": "q_003",
@@ -693,10 +692,9 @@ CREATE TABLE questions (
   prompt_text TEXT NOT NULL,
   prompt_image_url TEXT,
 
-  type TEXT NOT NULL CHECK (type IN ('mcq', 'numeric')),
-  options JSONB,  -- Array for MCQ
-  correct_option TEXT,  -- For MCQ
-  correct_value NUMERIC,  -- For numeric
+  type TEXT NOT NULL CHECK (type = 'mcq'),
+  options JSONB NOT NULL,  -- Array for MCQ
+  correct_option TEXT NOT NULL,  -- For MCQ
 
   explanation_text TEXT,
 
@@ -850,8 +848,8 @@ CREATE TABLE session_items (
 
 - ❓ **Question order**: Randomize or keep fixed order?
   - **Recommendation**: Randomize to prevent pattern memorization
-- ❓ **Numeric tolerance**: Exact match or ±0.01?
-  - **Recommendation**: ±0.01 for decimal answers, exact for integers
+- ❓ **MCQ answer matching**: Case-sensitive or case-insensitive?
+  - **Recommendation**: Case-insensitive for better UX
 - ❓ **Session resumption**: Allow or force restart?
   - **Recommendation**: Allow resume within 24 hours, then expire
 

@@ -89,26 +89,29 @@
 ### **Phase 1: Foundation** (Week 1)
 **Goal**: Set up infrastructure and basic user system
 
-- [ ] **Frontend Setup**
-  - [ ] Initialize React + Vite project
-  - [ ] Install dependencies (shadcn/ui, Tailwind, etc.)
-  - [ ] Configure build tools
-  - [ ] Set up routing structure
+- [x] **Frontend Setup**
+  - [x] Initialize React + Vite project
+  - [x] Install dependencies (shadcn/ui, Tailwind, etc.)
+  - [x] Configure build tools
+  - [x] Set up routing structure
 
-- [ ] **Backend Setup**
-  - [ ] Initialize FastAPI project
-  - [ ] Set up database connection (Supabase)
-  - [ ] Create database schema + migrations
-  - [ ] User ID generation endpoint
+- [x] **Backend Setup**
+  - [x] Initialize FastAPI project
+  - [x] Set up database connection (Supabase)
+  - [x] Create database schema + migrations
+  - [x] User ID generation endpoint
 
-- [ ] **Database**
-  - [ ] Create tables (users, topics, questions, sessions, user_question_state)
-  - [ ] Seed 3 topics + 50 questions
-  - [ ] Test queries
+- [x] **Database**
+  - [x] Create tables (users, topics, questions, sessions, user_question_state)
+  - [x] Seed 3 topics + 50 questions
+  - [x] Test queries
+  - [x] Configure Row-Level Security (RLS) policies
+  - [x] Set up database connection (connection pooler)
 
-**Status**: 🔴 Not Started  
+**Status**: 🟢 Complete  
 **Dependencies**: None  
-**Estimated Time**: 1 week
+**Estimated Time**: 1 week  
+**Notes**: Database fully configured with RLS security policies. All migrations applied successfully. Connection tested and working.
 
 ---
 
@@ -120,19 +123,20 @@
   - [ ] AuthLanding page (User ID creation/entry)
   - [ ] GradeSelection page
 
-- [ ] **Backend APIs**
-  - [ ] `POST /api/users` (create user with ID)
-  - [ ] `GET /api/users/{userId}` (validate & get user)
-  - [ ] `PATCH /api/users/{userId}` (update grade/class)
+- [x] **Backend APIs** ✅ Complete
+  - [x] `POST /api/users` (create user with ID) ✅ Tested
+  - [x] `GET /api/users/{userId}` (validate & get user) ✅ Tested
+  - [x] `PATCH /api/users/{userId}` (update grade/class) ✅ Tested
 
 - [ ] **Integration**
   - [ ] Wire up frontend to backend
   - [ ] Test full auth flow
   - [ ] Add error handling
 
-**Status**: 🔴 Not Started  
-**Dependencies**: Phase 1 complete  
-**Estimated Time**: 1 week
+**Status**: 🟡 In Progress (Backend APIs Complete, UI Pending)  
+**Dependencies**: Phase 1 complete ✅  
+**Estimated Time**: 1 week  
+**Progress**: ~50% (Backend done, Frontend pending)
 
 ---
 
@@ -260,11 +264,11 @@
 
 ## 📈 **Current Status**
 
-### **Overall Progress**: 0% Complete
+### **Overall Progress**: ~21% Complete
 
 ```
-Phase 1: Foundation          [░░░░░░░░░░] 0%
-Phase 2: Auth & Onboarding  [░░░░░░░░░░] 0%
+Phase 1: Foundation          [████████░░] 100% ✅
+Phase 2: Auth & Onboarding  [█████░░░░░] 50% 🟡 (Backend APIs done)
 Phase 3: Dashboard          [░░░░░░░░░░] 0%
 Phase 4: Practice Session   [░░░░░░░░░░] 0%
 Phase 5: FSRS Integration   [░░░░░░░░░░] 0%
@@ -278,12 +282,24 @@ Phase 7: Polish & Launch     [░░░░░░░░░░] 0%
 - [x] UI/UX designs and component specs
 - [x] Implementation execution plan
 - [x] Project overview document (this file)
+- [x] **Backend infrastructure fully set up**
+  - [x] FastAPI project initialized with `uv` package manager
+  - [x] Database connection configured (Supabase with connection pooler)
+  - [x] All database migrations applied (schema, seed data, RLS policies)
+  - [x] User API endpoints implemented and tested
+  - [x] Database security configured (Row-Level Security enabled)
+- [x] **Database security**
+  - [x] RLS enabled on all tables
+  - [x] Explicit policies for public read-only tables (topics, questions)
+  - [x] Private tables secured (users, sessions, user_question_state)
+  - [x] Direct privileges revoked from PUBLIC/anon roles
 
 ### **What's Next** 🔜
-1. **Start Phase 1**: Set up project infrastructure
-   - Initialize frontend project
-   - Initialize backend project
-   - Set up database schema
+1. **Start Phase 2**: Authentication & Onboarding
+   - Implement AuthShell layout component
+   - Create AuthLanding page (User ID creation/entry)
+   - Create GradeSelection page
+   - Wire up backend APIs
 
 2. **Begin UI Implementation**: Follow UI Execution Plan
    - Phase 0: Prerequisites (components, types, assets)
@@ -319,7 +335,7 @@ mikir-kids/
 │   │   ├── models/
 │   │   ├── services/
 │   │   └── main.py
-│   └── requirements.txt
+│   └── pyproject.toml
 │
 └── database/                    # SQL migrations
     └── migrations/
@@ -365,8 +381,8 @@ mikir-kids/
    
    # Backend (when ready)
    cd backend
-   pip install -r requirements.txt
-   uvicorn app.main:app --reload
+   uv sync
+   uv run uvicorn app.main:app --reload
    ```
 
 3. **Start implementing**:
@@ -409,7 +425,10 @@ mikir-kids/
 ## 🚨 **Blockers & Risks**
 
 ### **Current Blockers**
-- None (project not started yet)
+- None ✅ All infrastructure issues resolved
+  - Database connection working (using Supabase connection pooler)
+  - IPv6 connectivity issue resolved
+  - All migrations applied successfully
 
 ### **Potential Risks**
 1. **Backend API not ready** → Can mock API responses initially
@@ -429,8 +448,8 @@ mikir-kids/
 
 | Phase | Duration | Status |
 |-------|----------|--------|
-| Phase 1: Foundation | 1 week | 🔴 Not Started |
-| Phase 2: Auth & Onboarding | 1 week | 🔴 Not Started |
+| Phase 1: Foundation | 1 week | 🟢 Complete |
+| Phase 2: Auth & Onboarding | 1 week | 🟡 Ready to Start (Backend APIs done) |
 | Phase 3: Dashboard | 1 week | 🔴 Not Started |
 | Phase 4: Practice Session | 1 week | 🔴 Not Started |
 | Phase 5: FSRS Integration | 1 week | 🔴 Not Started |
@@ -497,9 +516,16 @@ As you make progress:
 
 ---
 
-**Last Updated**: Today  
-**Current Phase**: Planning Complete, Ready to Start Development  
-**Next Action**: Begin Phase 1 - Foundation Setup
+**Last Updated**: December 2024  
+**Current Phase**: Phase 1 Complete ✅, Phase 2 Backend APIs Complete ✅  
+**Next Action**: Begin Phase 2 Frontend - Authentication & Onboarding UI Components
+
+**Recent Accomplishments**:
+- ✅ Installed and configured `uv` package manager
+- ✅ Resolved database connection issues (using Supabase connection pooler)
+- ✅ Applied all database migrations including RLS security policies
+- ✅ Tested all User API endpoints - all tests passing
+- ✅ Database fully secured with Row-Level Security
 
 ---
 
