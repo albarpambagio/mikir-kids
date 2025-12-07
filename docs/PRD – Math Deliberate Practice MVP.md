@@ -92,7 +92,6 @@ Since this is a fun project, success means:
 - Detailed analytics and charts
 - Rich explanations (just show correct answer)
 - Native mobile apps
-- Complex knowledge graph (just simple topic tags)
 - Account recovery, email notifications
 - Offline mode
 
