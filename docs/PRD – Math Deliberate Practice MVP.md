@@ -102,6 +102,8 @@ Since this is a fun project, success means:
 - Video hints for hard questions
 - Custom topics/playlists
 - Import questions from other sources
+- Knowledge graph of topics
+- diagnostic test
 
 ---
 
