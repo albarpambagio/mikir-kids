@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react"
-import { PlusIcon, ArrowPathIcon, InformationCircleIcon } from "@heroicons/react/24/outline"
+import { PlusIcon, ArrowPathIcon } from "@heroicons/react/24/outline"
 import { Button } from "@/components/ui/button"
 import { UserIDTabs } from "./UserIDTabs"
 import { Input } from "@/components/ui/input"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { validateUserId } from "@/lib/validation"
 
 interface AuthFormProps {
@@ -77,32 +71,13 @@ export function AuthForm({ onCreateUserID, onUseExistingID, savedUserId }: AuthF
         Mulai Belajar
       </h1>
 
-      {/* Sub-heading with Tooltip */}
-      <div className="flex items-start gap-2 mb-16 max-w-[399px]">
+      {/* Sub-heading */}
+      <div className="mb-16 max-w-[399px]">
         <p className="text-[20px] font-semibold text-[#01413e] leading-[24px]">
-          Progres belajarmu akan tersimpan
+          Tidak Perlu Email & Password. Progres belajarmu akan tersimpan
           <br />
-          otomatis menggunakan User ID.
+          melalui User ID.
         </p>
-        <TooltipProvider delayDuration={0}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="flex-shrink-0 flex items-center justify-center cursor-help focus:outline-none hover:opacity-80 transition-opacity mt-0.5"
-                aria-label="Info tentang User ID"
-              >
-                <InformationCircleIcon className="h-4 w-4 text-[#475569]" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent 
-              side="bottom" 
-              className="max-w-[300px]"
-            >
-              Tidak perlu email atau password. User ID dipakai supaya kamu bisa langsung belajar tanpa membuat akun dan progres tetap aman tersimpan.
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
       </div>
 
       {/* Tab Switcher */}

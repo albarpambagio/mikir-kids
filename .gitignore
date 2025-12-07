@@ -68,3 +68,17 @@ wheels/
 *.swo
 *~
 
+# Build artifacts
+*.tsbuildinfo
+tsconfig.app.tsbuildinfo
+
+# Temporary files
+image.png
+
+# Root node_modules (should only be in frontend/)
+/node_modules
+/package-lock.json
+
+# IDE
+.cursor/
+

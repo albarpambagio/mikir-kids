@@ -48,6 +48,21 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Custom colors for dashboard
+        orange: {
+          DEFAULT: "#f9bc60",
+          hover: "#f8b350",
+        },
+        green: {
+          DEFAULT: "#498376",
+          light: "#84cc16",
+        },
+        yellow: {
+          DEFAULT: "#facc15",
+        },
+        red: {
+          DEFAULT: "#e11d48",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
