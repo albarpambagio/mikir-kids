@@ -11,8 +11,7 @@
 |----------|---------|--------|
 | [PRD – Math Deliberate Practice MVP.md](./PRD%20–%20Math%20Deliberate%20Practice%20MVP.md) | Product requirements & specifications | ✅ Complete |
 | [tech stack and project setup.md](./tech%20stack%20and%20project%20setup.md) | Technical architecture & setup guide | ✅ Complete |
-| [ui plan.md](./ui%20plan.md) | UI/UX designs & component specs | ✅ Complete |
-| [UI Execution Plan.md](./UI%20Execution%20Plan.md) | Screen-by-screen implementation plan | ✅ Complete |
+| [Spacing System & Design Tokens Guide.md](./Spacing%20System%20%26%20Design%20Tokens%20Guide.md) | Design system spacing & tokens | ✅ Complete |
 | **This Document** | Project status & big picture | 📊 Current |
 
 ---
@@ -118,35 +117,54 @@
 ### **Phase 2: Authentication & Onboarding** (Week 2)
 **Goal**: User can create/enter User ID and select grade
 
-- [ ] **UI Components**
-  - [ ] AuthShell layout component (hero image)
-  - [ ] AuthLanding page (User ID creation/entry)
-  - [ ] GradeSelection page
+- [x] **UI Components** ✅ Complete
+  - [x] AuthShell layout component (hero image)
+  - [x] AuthLanding page (User ID creation/entry)
+  - [x] GradeSelection page
+  - [x] Supporting components (AuthForm, HeroSection, GradeSelectionForm, UserIDTabs)
+  - [x] UserIdDisplay page
 
 - [x] **Backend APIs** ✅ Complete
   - [x] `POST /api/users` (create user with ID) ✅ Tested
   - [x] `GET /api/users/{userId}` (validate & get user) ✅ Tested
   - [x] `PATCH /api/users/{userId}` (update grade/class) ✅ Tested
 
-- [ ] **Integration**
-  - [ ] Wire up frontend to backend
-  - [ ] Test full auth flow
-  - [ ] Add error handling
+- [x] **Integration** ✅ Complete
+  - [x] Wire up frontend to backend APIs
+  - [x] Full auth flow implemented (create/validate → grade selection → dashboard)
+  - [x] Error handling with user-friendly messages
+  - [x] localStorage integration for User ID persistence
+  - [x] Routing configured (React Router)
 
-**Status**: 🟡 In Progress (Backend APIs Complete, UI Pending)  
+**Status**: 🟢 Complete  
 **Dependencies**: Phase 1 complete ✅  
 **Estimated Time**: 1 week  
-**Progress**: ~50% (Backend done, Frontend pending)
+**Progress**: 100% ✅
 
 ---
 
 ### **Phase 3: Dashboard & Topics** (Week 2-3)
 **Goal**: User can see topics and start practice sessions
 
-- [ ] **UI Components**
-  - [ ] Dashboard page (topic list)
-  - [ ] Topic cards with stats (dueCount, lastScorePercent)
-  - [ ] Navigation to practice
+- [x] **UI Components** ✅ Complete
+  - [x] Dashboard page (topic list)
+  - [x] KPI cards (Total Skor, Jumlah Soal Dikerjakan, Tingkat Retensi)
+  - [x] CTA card with texture overlay
+  - [x] Question list items with circular progress indicators
+  - [x] Filter dropdowns (Kelas, Topik)
+  - [x] Sort by retention functionality with tooltip
+  - [x] Navigation menu (Beranda, Topik)
+  - [x] Settings button
+  - [x] Tooltips for retention rate indicators
+  - [x] "Latihan" buttons on question items
+
+- [x] **Dashboard Layout & Styling** ✅ Complete
+  - [x] Layout restructure (KPI cards left, CTA card right)
+  - [x] Pixel-perfect styling matching Figma design
+  - [x] Proper spacing and dividers
+  - [x] Color scheme implementation (orange KPI values, gray categories)
+  - [x] Badge positioning and styling
+  - [x] Texture overlay on CTA card
 
 - [ ] **Backend APIs**
   - [ ] `GET /api/topics?grade_level={level}`
@@ -158,9 +176,10 @@
   - [ ] Priority 2: New questions
   - [ ] Return 15 questions for session
 
-**Status**: 🔴 Not Started  
-**Dependencies**: Phase 2 complete  
-**Estimated Time**: 1 week
+**Status**: 🟡 In Progress (UI Complete, Backend Pending)  
+**Dependencies**: Phase 2 complete ✅  
+**Estimated Time**: 1 week  
+**Progress**: ~60% (UI components complete, backend integration pending)
 
 ---
 
@@ -264,12 +283,12 @@
 
 ## 📈 **Current Status**
 
-### **Overall Progress**: ~21% Complete
+### **Overall Progress**: ~40% Complete
 
 ```
 Phase 1: Foundation          [████████░░] 100% ✅
-Phase 2: Auth & Onboarding  [█████░░░░░] 50% 🟡 (Backend APIs done)
-Phase 3: Dashboard          [░░░░░░░░░░] 0%
+Phase 2: Auth & Onboarding  [████████░░] 100% ✅
+Phase 3: Dashboard          [██████░░░░] 60% 🟡
 Phase 4: Practice Session   [░░░░░░░░░░] 0%
 Phase 5: FSRS Integration   [░░░░░░░░░░] 0%
 Phase 6: Session Summary    [░░░░░░░░░░] 0%
@@ -279,8 +298,7 @@ Phase 7: Polish & Launch     [░░░░░░░░░░] 0%
 ### **What's Done** ✅
 - [x] Product requirements document (PRD)
 - [x] Technical architecture & stack decisions
-- [x] UI/UX designs and component specs
-- [x] Implementation execution plan
+- [x] Implementation plans (AuthLanding, GradeSelection, Spacing System)
 - [x] Project overview document (this file)
 - [x] **Backend infrastructure fully set up**
   - [x] FastAPI project initialized with `uv` package manager
@@ -293,18 +311,110 @@ Phase 7: Polish & Launch     [░░░░░░░░░░] 0%
   - [x] Explicit policies for public read-only tables (topics, questions)
   - [x] Private tables secured (users, sessions, user_question_state)
   - [x] Direct privileges revoked from PUBLIC/anon roles
+- [x] **Phase 2: Authentication & Onboarding Complete**
+  - [x] AuthShell layout component with hero section
+  - [x] AuthLanding page (User ID creation/entry with tabs)
+  - [x] GradeSelection page (grade and class selection)
+  - [x] UserIdDisplay page (show newly created User ID)
+  - [x] All UI components (AuthForm, HeroSection, GradeSelectionForm, UserIDTabs)
+  - [x] API integration (createUser, validateUser, updateUser)
+  - [x] Error handling and validation
+  - [x] localStorage integration for User ID persistence
+  - [x] Complete routing setup (React Router)
+  - [x] Full auth flow: Create/Enter ID → Grade Selection → Dashboard
+
+- [x] **Phase 3: Dashboard UI Complete** 🟡
+  - [x] Dashboard page layout and structure
+  - [x] KPI cards (Total Skor, Jumlah Soal Dikerjakan, Tingkat Retensi)
+  - [x] CTA card with dark teal background and texture overlay
+  - [x] Question list items with circular progress indicators
+  - [x] Filter dropdowns (Kelas, Topik) with proper styling
+  - [x] Sort by retention icon with tooltip
+  - [x] Navigation menu (Beranda, Topik) in header
+  - [x] Settings button (Pengaturan) in header
+  - [x] Tooltips for retention rate indicators
+  - [x] "Latihan" buttons on question items
+  - [x] Pixel-perfect styling matching Figma design
+  - [x] Proper spacing, dividers, and layout alignment
+  - [x] Color scheme implementation (orange KPI values, gray categories)
+  - [x] Badge positioning and styling
+  - [x] Responsive layout considerations
 
 ### **What's Next** 🔜
-1. **Start Phase 2**: Authentication & Onboarding
-   - Implement AuthShell layout component
-   - Create AuthLanding page (User ID creation/entry)
-   - Create GradeSelection page
-   - Wire up backend APIs
+1. **Complete Phase 3**: Dashboard & Topics (Backend Integration)
+   - Implement backend APIs:
+     - `GET /api/topics?grade_level={level}`
+     - `GET /api/user-question-state/stats` (for dashboard stats)
+     - `POST /api/sessions` (create session)
+   - Build session engine (FSRS-due questions + new questions)
+   - Wire up frontend to backend APIs
+   - Implement sort by retention functionality
+   - Test data flow and error handling
 
-2. **Begin UI Implementation**: Follow UI Execution Plan
-   - Phase 0: Prerequisites (components, types, assets)
-   - Phase 1: AuthShell component
-   - Phase 2: AuthLanding & GradeSelection pages
+2. **Start Phase 4**: Practice Session
+   - Create PracticeSession page
+   - Implement question display and answer submission
+   - Add progress indicators and navigation
+
+3. **Testing & Refinement**
+   - Test full dashboard flow with real data
+   - Verify mobile responsiveness
+   - Test error scenarios and edge cases
+
+### **Missing Features & States** 📋
+**From Analysis Documents** (to be implemented):
+
+#### **Critical Missing Pages** (Phase 4-6)
+- [ ] **Practice Session Page** - Entire page missing from design
+  - Question display (text + image)
+  - MCQ buttons (A/B/C/D/E) or numeric input
+  - Progress indicator (e.g., "Soal 5 dari 15")
+  - Submit answer button
+  - "Tersimpan ✓" confirmation (500ms)
+  - Auto-advance to next question
+  - Session abandonment handling
+
+- [ ] **Session Summary Page** - Entire page missing from design
+  - Session score display (e.g., "12/15 Benar (80%)")
+  - Weak questions section (highlighted separately)
+  - All questions list (with correct/incorrect indicators)
+  - Correct answers for wrong questions
+  - "Latihan lagi" button
+  - "Kembali ke dashboard" button
+
+#### **Important Missing States** (Dashboard Polish)
+- [ ] **Loading States**
+  - Skeleton loaders for KPI cards
+  - Skeleton loaders for question list items
+  - Progressive loading (show data as it arrives)
+
+- [ ] **Empty States**
+  - No questions state (new user)
+  - Empty filter results
+  - Zero values handling
+
+- [ ] **Error States**
+  - API error handling (KPI stats, question list)
+  - Network error state
+  - Retry functionality
+
+- [ ] **Interactive States**
+  - Hover states for all clickable elements
+  - Focus states (keyboard navigation)
+  - Active/pressed states
+  - Selected filter indicators
+
+- [ ] **Edge Cases**
+  - Very large numbers formatting
+  - Long topic names truncation
+  - Many question items (scroll/pagination)
+  - Circular progress edge cases (0%, 100%)
+
+- [ ] **Accessibility**
+  - ARIA labels for all interactive elements
+  - Keyboard navigation support
+  - Color contrast verification
+  - Screen reader support
 
 ---
 
@@ -315,34 +425,42 @@ mikir-kids/
 ├── docs/
 │   ├── PRD – Math Deliberate Practice MVP.md
 │   ├── tech stack and project setup.md
-│   ├── ui plan.md
-│   ├── UI Execution Plan.md
+│   ├── Spacing System & Design Tokens Guide.md
+│   ├── Dashboard Missing Features Analysis.md
+│   ├── Dashboard Missing States & Edge Cases.md
 │   ├── SETUP_GUIDE.md
 │   └── Project Overview & Status.md (this file)
 │
 ├── frontend/                    # React + Vite app
 │   ├── src/
 │   │   ├── components/
-│   │   ├── pages/
-│   │   ├── hooks/
-│   │   ├── lib/
-│   │   ├── stores/
-│   │   └── types/
+│   │   │   ├── auth/            # Auth components (AuthShell, AuthForm, etc.)
+│   │   │   └── ui/              # shadcn/ui components (button, input, etc.)
+│   │   ├── pages/              # Page components (AuthLanding, GradeSelection, Dashboard)
+│   │   ├── lib/                # Utilities (api.ts, validation.ts, utils.ts)
+│   │   └── types/              # TypeScript types (user.ts)
+│   ├── public/assets/images/   # Image assets (hero-background.jpg, logo.png)
 │   └── package.json
 │
 ├── backend/                     # FastAPI app
 │   ├── app/
 │   │   ├── api/
+│   │   │   └── users.py        # User API endpoints
 │   │   ├── models/
+│   │   │   ├── database.py     # Database connection
+│   │   │   └── models.py       # Data models
 │   │   ├── services/
-│   │   └── main.py
+│   │   │   └── user_id_service.py  # User ID generation service
+│   │   └── main.py             # FastAPI app entry point
 │   └── pyproject.toml
 │
 └── database/                    # SQL migrations
     └── migrations/
+        ├── 001_initial_schema.sql
+        ├── 002_seed_data.sql
+        ├── 003_enable_rls.sql
+        └── 004_restrict_to_mcq_only.sql
 ```
-
-**Note**: Actual project structure may differ. This is the conceptual organization.
 
 ---
 
@@ -404,7 +522,7 @@ mikir-kids/
 ## 🎯 **Success Metrics**
 
 ### **MVP Completion Checklist**
-- [ ] User can create User ID and select grade
+- [x] User can create User ID and select grade ✅
 - [ ] User can see topics for their grade level
 - [ ] User can start a practice session
 - [ ] User can answer 15 questions
@@ -450,7 +568,7 @@ mikir-kids/
 | Phase | Duration | Status |
 |-------|----------|--------|
 | Phase 1: Foundation | 1 week | 🟢 Complete |
-| Phase 2: Auth & Onboarding | 1 week | 🟡 Ready to Start (Backend APIs done) |
+| Phase 2: Auth & Onboarding | 1 week | 🟢 Complete |
 | Phase 3: Dashboard | 1 week | 🔴 Not Started |
 | Phase 4: Practice Session | 1 week | 🔴 Not Started |
 | Phase 5: FSRS Integration | 1 week | 🔴 Not Started |
@@ -492,8 +610,9 @@ As you make progress:
 |----------|--------------|---------|
 | [PRD](./PRD%20–%20Math%20Deliberate%20Practice%20MVP.md) | - | Product requirements, user flows, API contracts |
 | [Tech Stack](./tech%20stack%20and%20project%20setup.md) | - | Setup instructions, code examples, deployment |
-| [UI Plan](./ui%20plan.md) | - | Screen designs, component code, UI specs |
-| [UI Execution Plan](./UI%20Execution%20Plan.md) | - | Step-by-step implementation guide |
+| [Spacing System & Design Tokens Guide](./Spacing%20System%20%26%20Design%20Tokens%20Guide.md) | - | Design system spacing & tokens reference |
+| [Dashboard Missing Features Analysis](./Dashboard%20Missing%20Features%20Analysis.md) | - | Analysis of missing features from design |
+| [Dashboard Missing States & Edge Cases](./Dashboard%20Missing%20States%20%26%20Edge%20Cases.md) | - | Missing UI states and edge cases |
 | [Project Overview](./Project%20Overview%20&%20Status.md) | Today | This document - big picture & status |
 
 ---
@@ -518,10 +637,29 @@ As you make progress:
 ---
 
 **Last Updated**: December 2024  
-**Current Phase**: Phase 1 Complete ✅, Phase 2 Backend APIs Complete ✅  
-**Next Action**: Begin Phase 2 Frontend - Authentication & Onboarding UI Components
+**Current Phase**: Phase 1 Complete ✅, Phase 2 Complete ✅, Phase 3 UI Complete 🟡  
+**Next Action**: Complete Phase 3 Backend Integration - Implement APIs and session engine
 
 **Recent Accomplishments**:
+- ✅ Phase 3 Dashboard UI fully implemented
+- ✅ Dashboard layout restructured to match Figma design (KPI cards left, CTA card right)
+- ✅ CTA card redesigned with dark teal background (#035855) and texture overlay
+- ✅ Navigation menu added (Beranda, Topik) with active/inactive states
+- ✅ Settings button implemented (replacing UserProfile dropdown)
+- ✅ KPI cards styled with orange values (#f4881b) matching design
+- ✅ Question list items with circular progress, badges, and "Latihan" buttons
+- ✅ Filter dropdowns (Kelas, Topik) with proper styling
+- ✅ Sort by retention functionality with tooltip
+- ✅ Tooltips added for retention rate indicators
+- ✅ Pixel-perfect styling: colors, spacing, typography, dividers
+- ✅ Badge positioning fixed (right side of category)
+- ✅ All layout issues resolved (alignment, separators, spacing)
+- ✅ Phase 2 Authentication & Onboarding fully complete
+- ✅ All UI components implemented (AuthShell, AuthLanding, GradeSelection, UserIdDisplay)
+- ✅ Frontend-backend integration complete with error handling
+- ✅ Full auth flow working (create/enter User ID → grade selection → dashboard navigation)
+- ✅ localStorage integration for User ID persistence
+- ✅ Routing configured and tested
 - ✅ Installed and configured `uv` package manager
 - ✅ Resolved database connection issues (using Supabase connection pooler)
 - ✅ Applied all database migrations including RLS security policies
