@@ -82,3 +82,6 @@ image.png
 # IDE
 .cursor/
 
+# Documentation
+docs/orm_to_sql_migration_analysis.md
+docs/MCP_Setup_Todo.md
