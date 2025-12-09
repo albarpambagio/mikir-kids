@@ -29,12 +29,14 @@ async def health():
     return {"status": "healthy"}
 
 # Import and include routers
-from app.api import users
+# Import and include routers
+from app.api import users, dashboard, sessions
 app.include_router(users.router, prefix="/api/users", tags=["users"])
-# TODO: Add topics and sessions routers in later phases
-# from app.api import topics, sessions
+app.include_router(dashboard.router, prefix="/api/dashboard", tags=["dashboard"])
+app.include_router(sessions.router, prefix="/api/sessions", tags=["sessions"])
+# TODO: Add topics router if needed in later phases
+# from app.api import topics
 # app.include_router(topics.router, prefix="/api/topics", tags=["topics"])
-# app.include_router(sessions.router, prefix="/api/sessions", tags=["sessions"])
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Inter:wght@300;500;600;700;800&display=swap');
+
+/* Design Tokens from Figma */
+@import './design-tokens.css';
 
 @tailwind base;
 @tailwind components;
@@ -12,25 +16,33 @@
     --card-foreground: 2 6 23;
     --popover: 0 0% 100%;
     --popover-foreground: 2 6 23;
-    --primary: 40 95% 68%; /* #f9bc60 in HSL */
-    --primary-foreground: 180 100% 6%; /* #001e1d */
-    --secondary: 160 30% 75%; /* #abd1c6 */
+    --primary: 40 95% 68%;
+    /* #f9bc60 in HSL */
+    --primary-foreground: 180 100% 6%;
+    /* #001e1d */
+    --secondary: 160 30% 75%;
+    /* #abd1c6 */
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 210 20% 96%; /* #f1f5f9 */
-    --accent-foreground: 222 47% 5%; /* #020617 */
+    --accent: 210 20% 96%;
+    /* #f1f5f9 */
+    --accent-foreground: 222 47% 5%;
+    /* #020617 */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
     --radius: 10px;
-    
+
     /* Brand colors */
-    --brand-green: 178 100% 14%; /* #004643 */
-    --brand-dark: 180 100% 6%; /* #001e1d */
-    --neutral-600: 0 0% 32%; /* #525252 */
+    --brand-green: 178 100% 14%;
+    /* #004643 */
+    --brand-dark: 180 100% 6%;
+    /* #001e1d */
+    --neutral-600: 0 0% 32%;
+    /* #525252 */
   }
 }
 
@@ -38,9 +50,9 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
   }
 }
-

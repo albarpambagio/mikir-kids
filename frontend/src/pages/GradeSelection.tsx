@@ -9,7 +9,7 @@ import { GradeLevel, ClassLevel } from "@/types/user"
 export function GradeSelection() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userId, isNew, user } = location.state || {};
+  const { userId, user } = location.state || {};
 
   useEffect(() => {
     if (!userId) {

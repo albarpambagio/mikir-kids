@@ -1,0 +1,190 @@
+/**
+ * Design Tokens - Extracted from Figma
+ * 
+ * This file contains all design tokens from Figma to ensure pixel-perfect implementation.
+ * All values are exact matches from Figma's design system.
+ */
+
+:root {
+    /* ============================================================
+   * COLORS - Exact from Figma Variables
+   * ============================================================ */
+
+    /* Primary Colors */
+    --color-white: #ffffff;
+    --color-general-foreground: #020617;
+    --color-general-border: #e2e8f0;
+    --color-general-destructive: #e16162;
+
+    /* Semantic Action Colors */
+    --color-primary-accent: #f9bc60;
+    --color-primary-accent-hover: #f8b350;
+    --color-danger: #ef4444;
+    --color-danger-light: #f37677;
+    --color-success: #009689;
+    --color-success-alt: #0d9488;
+    --color-progress-orange: #ff6f08;
+
+    /* Unofficial/Border Colors */
+    --color-unofficial-border-1: #f1f5f9;
+    --color-unofficial-border-3: #cbd5e1;
+    --color-unofficial-border-4: #94a3b8;
+    --color-unofficial-accent-3: #cbd5e1;
+    --color-unofficial-outline: #ffffff1a;
+    --color-unofficial-mid-alt: #475569;
+    --color-unofficial-ghost: #ffffff00;
+    --color-unofficial-ghost-foreground: #334155;
+
+    /* Background Colors */
+    --color-priority-bg: #fff3ea;
+    --color-stat-card-bg: #f5f5f5;
+
+    /* Neutral Scale */
+    --color-neutral-100: #f5f5f5;
+    --color-neutral-500: #737373;
+    --color-neutral-600: #525252;
+    --color-neutral-700: #404040;
+
+    /* Zinc Scale */
+    --color-zinc-700: #3f3f46;
+
+    /* Gray Scale */
+    --color-gray-600: #4b5563;
+
+    /* Slate Scale */
+    --color-slate-600: #475569;
+    --color-slate-500: #64748b;
+
+    /* Teal Scale */
+    --color-teal-600: #0d9488;
+
+    /* Text Colors */
+    --color-text-primary: #262626;
+    --color-text-secondary: #404040;
+    --color-text-muted: #525252;
+    --color-text-light: #737373;
+
+    /* ============================================================
+   * SPACING - Absolute & Semantic
+   * ============================================================ */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 40px;
+    --spacing-1-5: 6px;
+
+    /* ============================================================
+   * BORDER RADIUS - Semantic values
+   * ============================================================ */
+    --rounded-sm: 5px;
+    --rounded-md: 8px;
+    --rounded-lg: 10px;
+    --rounded-xl: 12px;
+    --rounded-2xl: 20px;
+    --rounded-full: 9999px;
+
+    /* ============================================================
+   * TYPOGRAPHY - Font Definitions
+   * ============================================================ */
+    --font-family-body: 'Inter', sans-serif;
+    --font-family-headings: 'Inter', sans-serif;
+
+    /* Heading 1 */
+    --heading-1-font-size: 48px;
+    --heading-1-line-height: 48px;
+    --heading-1-letter-spacing: -1.5px;
+    --heading-1-font-weight: 600;
+
+    /* Heading 2 */
+    --heading-2-font-size: 40px;
+    --heading-2-line-height: 44px;
+    --heading-2-letter-spacing: 0.2px;
+    --heading-2-font-weight: 600;
+
+    /* Heading 3 */
+    --heading-3-font-size: 32px;
+    --heading-3-line-height: 36px;
+    --heading-3-letter-spacing: 0.16px;
+    --heading-3-font-weight: 600;
+
+    /* Heading 4 */
+    --heading-4-font-size: 24px;
+    --heading-4-line-height: 28px;
+    --heading-4-letter-spacing: 0.12px;
+    --heading-4-font-weight: 600;
+
+    /* Heading 5 */
+    --heading-5-font-size: 20px;
+    --heading-5-line-height: 24px;
+    --heading-5-letter-spacing: 0.1px;
+    --heading-5-font-weight: 500;
+
+    /* Paragraph/Mini */
+    --paragraph-mini-font-size: 12px;
+    --paragraph-mini-line-height: 16px;
+    --paragraph-mini-letter-spacing: 0.18px;
+    --paragraph-mini-font-weight-regular: 400;
+    --paragraph-mini-font-weight-bold: 600;
+
+    /* Paragraph/Small */
+    --paragraph-small-font-size: 14px;
+    --paragraph-small-line-height: 21px;
+    --paragraph-small-letter-spacing: 0.07px;
+    --paragraph-small-font-weight-regular: 400;
+    --paragraph-small-font-weight-medium: 500;
+    --paragraph-small-font-weight-bold: 600;
+
+    /* Paragraph/Regular */
+    --paragraph-regular-font-size: 15px;
+    --paragraph-regular-line-height: 21px;
+    --paragraph-regular-letter-spacing: 0.07px;
+    --paragraph-regular-font-weight-light: 300;
+    --paragraph-regular-font-weight-regular: 400;
+
+    /* Large Numbers */
+    --large-number-font-size: 64px;
+    --large-number-font-weight: 700;
+    --large-number-letter-spacing: 0.32px;
+
+    /* ============================================================
+   * SHADOWS - From Figma Shadow Tokens
+   * ============================================================ */
+    --shadow-sm-color: #0000001a;
+    --shadow-sm-x: 0px;
+    --shadow-sm-y: 1px;
+    --shadow-sm-blur: 3px;
+    --shadow-sm-spread: 0px;
+
+    /* Combined shadow (two layers) */
+    --shadow-sm:
+        0px 1px 2px -1px var(--shadow-sm-color),
+        0px 1px 3px 0px var(--shadow-sm-color);
+}
+
+/* ============================================================
+ * UTILITY CLASSES
+ * ============================================================ */
+
+/* Typography Utilities */
+.paragraph-mini-bold {
+    font-family: var(--font-family-body);
+    font-size: var(--paragraph-mini-font-size);
+    font-weight: var(--paragraph-mini-font-weight-bold);
+    line-height: var(--paragraph-mini-line-height);
+    letter-spacing: var(--paragraph-mini-letter-spacing);
+}
+
+.paragraph-small-bold {
+    font-family: var(--font-family-body);
+    font-size: var(--paragraph-small-font-size);
+    font-weight: var(--paragraph-small-font-weight-bold);
+    line-height: var(--paragraph-small-line-height);
+    letter-spacing: var(--paragraph-small-letter-spacing);
+}
+
+/* Shadow Utility */
+.shadow-sm-figma {
+    box-shadow: var(--shadow-sm);
+}

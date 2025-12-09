@@ -24,7 +24,6 @@ const getClassOptions = (grade: GradeLevel): ClassLevel[] => {
 };
 
 export function GradeSelectionForm({ 
-  userId, 
   initialGradeLevel, 
   initialClassLevel,
   onSubmit 

@@ -11,7 +11,6 @@
 
 import { useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { Dashboard } from "./Dashboard"
 
 export function DashboardTest() {
   const navigate = useNavigate()

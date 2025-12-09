@@ -1,23 +1,22 @@
 export interface DashboardStats {
-  totalScore: number
-  totalQuestions: number
-  retentionRate: number // 0-100
+  questionsDue: number
+  topicsMastered: number
+  currentStreak: number
 }
 
-export interface QuestionStats {
-  topic: string
-  category: string
-  grade: string
-  progress: number // 0-100
-  dueCount: number
-}
-
-export interface Topic {
-  id: string
+export interface TopicStat {
+  topicId: string
   name: string
-  category: string
-  grade: string
+  thumbnailUrl?: string
+  questionsDue: number
+  totalQuestions: number
+  masteryLevel: number // 0-100
+  status: "locked" | "new" | "in_progress" | "mastered"
 }
+
+// Keeping legacy types for compatibility during migration if needed, 
+// but marked as deprecated or just removed if I'm confident.
+// I'll leave filters as they are useful.
 
 export interface GradeFilter {
   value: string
@@ -28,4 +27,3 @@ export interface TopicFilter {
   value: string
   label: string
 }
-

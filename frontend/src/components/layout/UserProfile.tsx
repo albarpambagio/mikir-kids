@@ -1,4 +1,4 @@
-import { User, ChevronDown } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,

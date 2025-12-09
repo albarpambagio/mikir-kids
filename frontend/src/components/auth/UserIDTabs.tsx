@@ -9,7 +9,7 @@ interface UserIDTabsProps {
 
 export function UserIDTabs({ value, onValueChange }: UserIDTabsProps) {
   return (
-    <Tabs value={value} onValueChange={onValueChange} className="w-fit">
+    <Tabs value={value} onValueChange={(val) => onValueChange(val as "new" | "existing")} className="w-fit">
       <TabsList className="bg-accent p-[3px] rounded-[10px] inline-flex items-center">
         <TabsTrigger
           value="new"
