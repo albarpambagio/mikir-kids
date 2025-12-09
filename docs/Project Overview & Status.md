@@ -186,27 +186,34 @@
 ### **Phase 4: Practice Session** (Week 3)
 **Goal**: User can answer questions one-by-one
 
-- [ ] **UI Components**
-  - [ ] PracticeSession page
-  - [ ] Question display (text + image)
-  - [ ] MCQ buttons / numeric input
-  - [ ] Progress indicator
-  - [ ] Answer submission flow
+- [x] **UI Components** ✅ Complete
+  - [x] PracticeSession page
+  - [x] Question display (text + image support)
+  - [x] MCQ buttons / numeric input
+  - [x] Progress indicator
+  - [x] Answer submission flow
+  - [x] Question navigation sidebar
+  - [x] PracticeFeedback page
+  - [x] Session summary display
+  - [x] Correct/Incorrect answer visualization
+  - [x] Question results cards
 
 - [x] **Backend APIs** ✅ Complete
   - [x] `POST /api/sessions/{sessionId}/answer`
   - [x] Answer validation logic
   - [x] Session state management (SessionItem updates)
 
-- [ ] **Features**
+- [ ] **Features** (Integration needed)
+  - [ ] Connect to backend Session API
+  - [ ] Real-time answer submission
   - [ ] Auto-advance to next question
   - [ ] "Tersimpan" confirmation
-  - [ ] Session abandonment handling (Backend supports it via status)
-  - [ ] Last question → navigate to summary
+  - [ ] Session abandonment handling
+  - [ ] Navigate to feedback on completion
 
-**Status**: 🟡 In Progress  
-**Dependencies**: Phase 3 complete  
-**Estimated Time**: 1 week
+**Status**: 🟡 In Progress (Frontend UI Complete, Integration Pending)
+**Dependencies**: Phase 3 complete ✅  
+**Estimated Time**: 2-3 days (Integration only)
 
 ---
 
@@ -233,25 +240,25 @@
 ### **Phase 6: Session Summary** (Week 4)
 **Goal**: User can review results and see weak questions
 
-- [ ] **UI Components**
-  - [ ] SessionSummary page
-  - [ ] Weak questions section
-  - [ ] All questions list
-  - [ ] Score display
+- [x] **UI Components** ✅ Complete (PracticeFeedback.tsx)
+  - [x] SessionSummary page (implemented as PracticeFeedback)
+  - [x] Weak questions section (correct/incorrect map)
+  - [x] All questions list (question result cards)
+  - [x] Score display (total score + retention)
 
-- [ ] **Backend APIs**
+- [ ] **Backend APIs** (Integration needed)
   - [ ] `GET /api/sessions/{sessionId}/summary`
   - [ ] Calculate stats (correct/incorrect)
   - [ ] Separate weak questions
 
-- [ ] **Features**
-  - [ ] "Latihan lagi" button
+- [ ] **Features** (Integration needed)
+  - [ ] "Latihan lagi" button functionality
   - [ ] "Kembali ke dashboard" button
   - [ ] Display correct answers for wrong questions
 
-**Status**: 🔴 Not Started  
+**Status**: � In Progress (Frontend UI Complete, Integration Pending)  
 **Dependencies**: Phase 4 complete  
-**Estimated Time**: 3-4 days
+**Estimated Time**: 1-2 days (Integration only)
 
 ---
 
@@ -289,9 +296,9 @@
 Phase 1: Foundation          [████████░░] 100% ✅
 Phase 2: Auth & Onboarding  [████████░░] 100% ✅
 Phase 3: Dashboard          [██████████] 100% ✅
-Phase 4: Practice Session   [████████░░] 80% 🟡 (Frontend In Progress)
+Phase 4: Practice Session   [████████░░] 85% 🟡 (UI Done, Integration Pending)
 Phase 5: FSRS Integration   [░░░░░░░░░░] 0%
-Phase 6: Session Summary    [░░░░░░░░░░] 0%
+Phase 6: Session Summary    [████████░░] 80% 🟡 (UI Done, Integration Pending)
 Phase 7: Polish & Launch     [░░░░░░░░░░] 0%
 ```
 
@@ -434,11 +441,40 @@ mikir-kids/
 ├── frontend/                    # React + Vite app
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── auth/            # Auth components (AuthShell, AuthForm, etc.)
-│   │   │   └── ui/              # shadcn/ui components (button, input, etc.)
-│   │   ├── pages/              # Page components (AuthLanding, GradeSelection, Dashboard)
+│   │   │   ├── auth/            # Auth components (5 components)
+│   │   │   │   ├── AuthShell.tsx
+│   │   │   │   ├── AuthForm.tsx
+│   │   │   │   ├── GradeSelectionForm.tsx
+│   │   │   │   ├── HeroSection.tsx
+│   │   │   │   └── UserIDTabs.tsx
+│   │   │   ├── dashboard/       # Dashboard components (4 components)
+│   │   │   │   ├── CTACard.tsx
+│   │   │   │   ├── KPICard.tsx
+│   │   │   │   ├── QuestionListItem.tsx
+│   │   │   │   └── TopicCard.tsx
+│   │   │   ├── layout/          # Layout components (3 components)
+│   │   │   │   ├── Logo.tsx
+│   │   │   │   ├── NavigationMenu.tsx
+│   │   │   │   └── UserProfile.tsx
+│   │   │   └── ui/              # shadcn/ui components (11 components)
+│   │   │       ├── badge.tsx, button.tsx, card.tsx
+│   │   │       ├── dropdown-menu.tsx, input.tsx
+│   │   │       ├── progress.tsx, select.tsx
+│   │   │       ├── skeleton.tsx, tabs.tsx, tooltip.tsx
+│   │   │       └── CircularProgress.tsx
+│   │   ├── pages/              # Page components (9 pages)
+│   │   │   ├── AuthLanding.tsx       # ✅ Complete
+│   │   │   ├── UserIdDisplay.tsx     # ✅ Complete
+│   │   │   ├── GradeSelection.tsx    # ✅ Complete
+│   │   │   ├── Dashboard.tsx         # ✅ Legacy (replaced by Enhanced)
+│   │   │   ├── EnhancedDashboard.tsx # ✅ Complete (Pixel-perfect)
+│   │   │   ├── DashboardTest.tsx     # ✅ Test page
+│   │   │   ├── Topics.tsx            # ✅ Complete (Pixel-perfect)
+│   │   │   ├── PracticeSession.tsx   # ✅ UI Complete (needs integration)
+│   │   │   └── SessionSummary.tsx    # ✅ UI Complete (needs integration)
 │   │   ├── lib/                # Utilities (api.ts, validation.ts, utils.ts)
-│   │   └── types/              # TypeScript types (user.ts)
+│   │   ├── types/              # TypeScript types (user.ts, practice.ts, topics.ts)
+│   │   └── main.tsx            # ✅ Router configured
 │   ├── public/assets/images/   # Image assets (hero-background.jpg, logo.png)
 │   └── package.json
 │
@@ -672,9 +708,14 @@ As you make progress:
   - ✅ Verified Session flow end-to-end with test script
   - ✅ Resolved frontend build error (missing Progress component)
 - ✅ **Phase 4 Practice Session UI started**
-  - ✅ PracticeFeedback page fixed and refined
+  - ✅ PracticeSession page: Full UI with question display, MCQ buttons, progress bar
+  - ✅ Question navigation sidebar with 15-question grid
+  - ✅ SessionSummary page: Session summary with correct/incorrect visualization
+  - ✅ Question result cards showing user vs. correct answers
   - ✅ Pixel-perfect UI implementation for Dashboard and Topic cards
   - ✅ Connected to Figma for design reference
+  - ✅ All 9 pages implemented and routed in main.tsx
+  - ✅ 23 custom components organized by feature (auth, dashboard, layout, ui)
 
 ---
 

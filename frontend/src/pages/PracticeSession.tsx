@@ -36,7 +36,7 @@ export function PracticeSession() {
   }
 
   const handleSubmit = () => {
-    navigate(`/practice/${topicId}/feedback`)
+    navigate(`/practice/${topicId}/summary`)
   }
 
   const progressPercentage = (currentQuestion / totalQuestions) * 100

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { X, Check, XCircle } from "lucide-react"
+import { X, Check } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
@@ -32,7 +32,7 @@ const mockSummary = {
   ]
 }
 
-export function PracticeFeedback() {
+export function SessionSummary() {
   const navigate = useNavigate()
 
   const handleClose = () => {

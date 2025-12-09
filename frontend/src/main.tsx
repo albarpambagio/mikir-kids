@@ -11,7 +11,7 @@ import { DashboardTest } from './pages/DashboardTest'
 import { EnhancedDashboard } from './pages/EnhancedDashboard'
 import { Topics } from './pages/Topics'
 import { PracticeSession } from './pages/PracticeSession'
-import { PracticeFeedback } from './pages/PracticeFeedback'
+import { SessionSummary } from './pages/SessionSummary'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,7 +37,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/beranda" element={<EnhancedDashboard />} />
           <Route path="/topics" element={<Topics />} />
           <Route path="/practice/:topicId" element={<PracticeSession />} />
-          <Route path="/practice/:topicId/feedback" element={<PracticeFeedback />} />
+          <Route path="/practice/:topicId/summary" element={<SessionSummary />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
