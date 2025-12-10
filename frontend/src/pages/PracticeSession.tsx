@@ -98,7 +98,7 @@ export function PracticeSession() {
           <div className="flex items-center gap-6">
             <button
               onClick={handleBack}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-150"
             >
               <ArrowLeft className="w-6 h-6 text-[#475569]" />
             </button>
@@ -118,7 +118,7 @@ export function PracticeSession() {
           <div className="flex-1">
             <div className="relative h-2 bg-[#cbd5e1] rounded-full overflow-hidden">
               <div
-                className="absolute top-0 left-0 h-full bg-[#ff6f08] rounded-full transition-all"
+                className="absolute top-0 left-0 h-full bg-[#ff6f08] rounded-full transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -151,18 +151,18 @@ export function PracticeSession() {
                       onClick={() => setSelectedAnswer(letter)}
                       disabled={phase !== 'QUESTION'}
                       className={cn(
-                        'w-full flex items-center gap-4 p-4 rounded-[10px] border transition-all text-left',
+                        'w-full flex items-center gap-4 p-4 rounded-[10px] border transition-all duration-150 text-left',
                         selectedAnswer === letter
-                          ? 'border-[#f9bc60] bg-[#fff3ea]'
+                          ? 'border-[#FFA41A] bg-[#fff3ea]'
                           : 'border-[#cbd5e1] hover:border-[#94a3b8]',
                         phase !== 'QUESTION' && 'opacity-60 cursor-not-allowed'
                       )}
                     >
                       <div
                         className={cn(
-                          'w-[42px] h-[42px] rounded-[10px] flex items-center justify-center text-[20px] tracking-[0.1px] transition-all',
+                          'w-[42px] h-[42px] rounded-[10px] flex items-center justify-center text-[20px] tracking-[0.1px] transition-all duration-150',
                           selectedAnswer === letter
-                            ? 'bg-[#f9bc60] text-white font-extrabold'
+                            ? 'bg-[#FFA41A] text-white font-extrabold'
                             : 'border border-[#cbd5e1] text-[#404040] font-light'
                         )}
                       >
@@ -182,7 +182,7 @@ export function PracticeSession() {
                   <Button
                     onClick={handleSubmitAnswer}
                     disabled={!selectedAnswer}
-                    className="bg-[#f9bc60] hover:bg-[#f8b350] text-white text-[14px] font-semibold tracking-[0.07px] h-[36px] px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-[#FFA41A] hover:bg-[#ff9a00] text-white text-[14px] font-semibold tracking-[0.07px] h-[36px] px-6 rounded-[8px] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Submit Jawaban
                   </Button>
@@ -231,12 +231,12 @@ export function PracticeSession() {
                     key={num}
                     onClick={() => handleQuestionNavigate(questionIndex)}
                     className={cn(
-                      'w-[48px] h-[48px] rounded-[8px] flex items-center justify-center text-[18px] tracking-[0.09px] transition-all font-semibold',
+                      'w-[48px] h-[48px] rounded-[8px] flex items-center justify-center text-[18px] tracking-[0.09px] transition-all duration-150 font-semibold',
                       isCurrent
-                        ? 'bg-white text-[#f9bc60] border-2 border-[#f9bc60]' // Active: yellow outline
+                        ? 'bg-white text-[#FFA41A] border-2 border-[#FFA41A]' // Active: yellow outline
                         : isAnswered
-                          ? 'bg-[#f9bc60] text-white border-2 border-[#f9bc60]' // Completed: orange fill
-                          : 'bg-white text-black hover:bg-[#f9bc60]/20 border border-gray-200 hover:border-[#f9bc60]' // Default
+                          ? 'bg-[#FFA41A] text-white border-2 border-[#FFA41A]' // Completed: orange fill
+                          : 'bg-white text-black hover:bg-[#FFA41A]/20 border border-gray-200 hover:border-[#FFA41A]' // Default
                     )}
                   >
                     {num}

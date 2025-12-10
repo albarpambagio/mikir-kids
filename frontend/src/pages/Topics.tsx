@@ -103,7 +103,7 @@ export function Topics() {
           </Select>
 
           {/* Sort Button */}
-          <button className="w-[45px] h-[45px] flex items-center justify-center hover:bg-gray-50 rounded-lg transition-colors">
+          <button className="w-[45px] h-[45px] flex items-center justify-center hover:bg-gray-50 rounded-lg transition-colors duration-150">
             <img src="/assets/icons/sort.svg" alt="Sort" className="w-6 h-6" />
           </button>
 
@@ -146,13 +146,13 @@ function TopicCard({ topic, onClick }: TopicCardProps) {
   const hasReview = topic.questionsDue > 0
 
   return (
-    <div className="border border-[#cbd5e1] rounded-[20px] p-6 hover:border-[#94a3b8] transition-colors">
+    <div className="border border-[#cbd5e1] rounded-[20px] p-6 hover:border-[#94a3b8] transition-colors duration-150">
       {/* Header */}
       <div className="mb-4">
-        <p className="text-[15px] font-light tracking-[0.07px] text-[#4b5563] mb-2">
-          {topic.category}
-        </p>
         <div className="flex items-center gap-2 mb-2">
+          <p className="text-[15px] font-light tracking-[0.07px] text-[#4b5563]">
+            {topic.category}
+          </p>
           <Badge variant="grade" size="sm">
             {topic.grade}
           </Badge>
@@ -182,7 +182,7 @@ function TopicCard({ topic, onClick }: TopicCardProps) {
             </Badge>
             <Button
               onClick={onClick}
-              className="bg-[#f9bc60] hover:bg-[#f8b350] text-white text-[14px] font-bold tracking-[0.07px] h-[36px] px-6 rounded-full"
+              className="bg-[#FFA41A] hover:bg-[#ff9a00] text-white text-[14px] font-bold tracking-[0.07px] h-[36px] px-6 rounded-[8px]"
             >
               Mulai Review
             </Button>
@@ -193,7 +193,7 @@ function TopicCard({ topic, onClick }: TopicCardProps) {
             <Button
               onClick={onClick}
               variant="outline"
-              className="text-[#020617] border-[#cbd5e1] hover:bg-slate-50 text-[14px] font-semibold tracking-[0.07px] h-[36px] px-6 rounded-full"
+              className="text-[#020617] border-[#cbd5e1] hover:bg-slate-50 text-[14px] font-semibold tracking-[0.07px] h-[36px] px-6 rounded-[8px]"
             >
               Latihan
             </Button>

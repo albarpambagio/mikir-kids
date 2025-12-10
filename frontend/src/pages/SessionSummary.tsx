@@ -68,7 +68,7 @@ export function SessionSummary() {
           <div className="flex items-center gap-6">
             <button
               onClick={handleBackToDashboard}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-150"
             >
               <X className="w-6 h-6 text-[#475569]" />
             </button>
@@ -166,14 +166,14 @@ export function SessionSummary() {
         <div className="flex gap-4 mb-8">
           <Button
             onClick={handleBackToDashboard}
-            className="flex items-center gap-2 bg-white border-2 border-[#cbd5e1] text-[#404040] hover:bg-gray-50 px-6 py-3 rounded-lg font-semibold"
+            className="flex items-center gap-2 bg-white border-2 border-[#cbd5e1] text-[#404040] hover:bg-gray-50 px-6 py-3 rounded-[8px] font-semibold"
           >
             <Home className="w-5 h-5" />
             Kembali ke Dashboard
           </Button>
           <Button
             onClick={handlePracticeAgain}
-            className="flex items-center gap-2 bg-[#f4881b] hover:bg-[#ea580c] text-white px-6 py-3 rounded-lg font-semibold"
+            className="flex items-center gap-2 bg-[#f4881b] hover:bg-[#ea580c] text-white px-6 py-3 rounded-[8px] font-semibold"
           >
             <RotateCcw className="w-5 h-5" />
             Latihan Lagi
@@ -213,8 +213,8 @@ function QuestionResultCard({ result, index }: QuestionResultCardProps) {
   return (
     <div
       className={cn(
-        'border-2 rounded-[20px] p-6',
-        result.isCorrect ? 'border-[#10b981] bg-[#f0fdf4]' : 'border-[#ef4444] bg-[#fef2f2]'
+        'border-2 rounded-[20px] p-6 bg-white',
+        result.isCorrect ? 'border-[#10b981]' : 'border-[#ef4444]'
       )}
     >
       {/* Header with status */}
@@ -260,7 +260,7 @@ function QuestionResultCard({ result, index }: QuestionResultCardProps) {
             <div
               key={idx}
               className={cn(
-                'flex items-center gap-4 p-3 rounded-[10px] border-2 transition-colors',
+                'flex items-center gap-4 p-3 rounded-[10px] border-2 transition-colors duration-150',
                 isCorrectAnswer
                   ? 'border-[#10b981] bg-white'
                   : !result.isCorrect && isUserAnswer

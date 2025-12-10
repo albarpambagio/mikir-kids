@@ -48,7 +48,7 @@ const ConfidenceSelector: React.FC<ConfidenceSelectorProps> = ({
                             key={button.value}
                             onClick={() => setSelected(button.value)}
                             className={`
-                flex flex-col items-center gap-3 p-4 rounded-lg border-2 transition-all
+                flex flex-col items-center gap-3 p-4 rounded-lg border-2 transition-all duration-150
                 ${selected === button.value
                                     ? 'border-[#f4881b] bg-[#fff3ea]'
                                     : 'border-gray-200 bg-white hover:border-gray-300'
@@ -74,7 +74,7 @@ const ConfidenceSelector: React.FC<ConfidenceSelectorProps> = ({
                     <Button
                         onClick={handleSubmit}
                         disabled={!selected}
-                        className="w-full bg-[#f4881b] hover:bg-[#ea580c] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full bg-[#f4881b] hover:bg-[#ea580c] text-white font-semibold py-3 rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         Submit
                         <span>▶</span>

@@ -23,8 +23,8 @@ const ResultCard: React.FC<ResultCardProps> = ({
     return (
         <Card
             className={`
-        w-full p-6 shadow-lg border-2
-        ${isCorrect ? 'bg-[#f0fdf4] border-[#bbf7d0]' : 'bg-[#fef2f2] border-[#fecaca]'}
+        w-full p-6 shadow-lg border-2 bg-white
+        ${isCorrect ? 'border-[#bbf7d0]' : 'border-[#fecaca]'}
       `}
         >
             <div className="space-y-4">
@@ -84,7 +84,7 @@ const ResultCard: React.FC<ResultCardProps> = ({
                 <div className="pt-4">
                     <Button
                         onClick={onNext}
-                        className="w-full bg-[#f4881b] hover:bg-[#ea580c] text-white font-semibold py-3 rounded-lg transition-colors"
+                        className="w-full bg-[#f4881b] hover:bg-[#ea580c] text-white font-semibold py-3 rounded-lg transition-colors duration-150"
                     >
                         Lanjut
                     </Button>

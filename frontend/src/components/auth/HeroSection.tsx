@@ -14,7 +14,7 @@ export function HeroSection({ backgroundImage, heading, description }: HeroSecti
       />
       
       {/* Overlay Gradient */}
-      <div className="absolute inset-0 bg-[#f9bc60] opacity-20" />
+      <div className="absolute inset-0 bg-[#FFA41A] opacity-20" />
       
       {/* Text Overlay - Bottom Left */}
       <div className="absolute bottom-0 left-0 p-6 md:p-12 text-white">

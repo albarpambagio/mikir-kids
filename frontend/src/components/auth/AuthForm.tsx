@@ -130,7 +130,7 @@ export function AuthForm({ onCreateUserID, onUseExistingID, savedUserId }: AuthF
       <Button
         onClick={handleSubmit}
         disabled={isLoading}
-        className="bg-[#f9bc60] text-[#001e1d] hover:bg-[#f9bc60]/90 rounded-full h-9 px-4 py-[7.5px] w-full max-w-[390px] disabled:opacity-50 gap-2"
+        className="bg-[#FFA41A] text-[#001e1d] hover:bg-[#FFA41A]/90 rounded-full h-9 px-4 py-[7.5px] w-full max-w-[390px] disabled:opacity-50 gap-2"
       >
         {isLoading ? (
           <>

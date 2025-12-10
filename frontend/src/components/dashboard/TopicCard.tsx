@@ -37,7 +37,7 @@ export function TopicCard({
 
     return (
         <Card className={cn(
-            "bg-white rounded-[20px] border border-[#cbd5e1] hover:border-[#94a3b8] transition-colors",
+            "bg-white rounded-[20px] border border-[#cbd5e1] hover:border-[#94a3b8] transition-colors duration-150",
             "h-auto min-h-[160px] flex flex-col justify-between",
             className
         )}>
@@ -98,9 +98,9 @@ export function TopicCard({
                             onClick={handlePractice}
                             size="sm"
                             className={cn(
-                                "rounded-full px-4 h-9 font-medium shadow-sm transition-all",
+                                "rounded-[8px] px-4 h-9 font-medium shadow-sm transition-all duration-150",
                                 hasDue
-                                    ? "bg-[#f9bc60] hover:bg-[#f8b350] text-[#001e1d]"
+                                    ? "bg-[#FFA41A] hover:bg-[#ff9a00] text-[#001e1d]"
                                     : "bg-slate-900 hover:bg-slate-800 text-white"
                             )}
                         >

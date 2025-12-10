@@ -9,7 +9,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
+          "bg-transparent text-[#020617] border border-[#cbd5e1]",
         secondary:
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
@@ -17,11 +17,13 @@ const badgeVariants = cva(
         outline: "text-foreground border",
         // Figma-specific variants
         review:
-          "bg-[#ef4444] text-white border-transparent",
+          "bg-transparent text-[#ef4444] border border-[#ef4444]",
+        practice:
+          "bg-transparent text-[#0d9488] border border-[#0d9488]",
         grade:
-          "bg-white text-[#020617] border border-[#cbd5e1]",
+          "bg-transparent text-[#020617] border border-[#cbd5e1]",
         topic:
-          "bg-[#020617] text-white border-transparent",
+          "bg-transparent text-[#020617] border border-[#cbd5e1]",
       },
       size: {
         default: "px-2.5 py-0.5 text-xs rounded-full",

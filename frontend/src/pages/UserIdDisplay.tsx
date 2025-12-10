@@ -98,7 +98,7 @@ export function UserIdDisplay() {
         {/* Continue Button */}
         <Button
           onClick={handleContinue}
-          className="bg-[#f9bc60] text-[#001e1d] hover:bg-[#f9bc60]/90 rounded-[8px] h-9 px-4 py-[7.5px] w-full md:w-auto"
+          className="bg-[#FFA41A] text-[#001e1d] hover:bg-[#FFA41A]/90 rounded-[8px] h-9 px-4 py-[7.5px] w-full md:w-auto"
         >
           Lanjutkan
         </Button>

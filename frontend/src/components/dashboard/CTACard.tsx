@@ -51,7 +51,7 @@ export function CTACard({ questionsDue = 0, className }: CTACardProps) {
               <p className="text-[32px] font-semibold leading-[36px] text-white tracking-[0.2px] mb-2 opacity-90">
                 Waktunya Review!
               </p>
-              <p className="text-[48px] font-bold leading-[48px] text-[#f9bc60] tracking-[0.24px] mb-[4px]">
+              <p className="text-[48px] font-bold leading-[48px] text-[#FFA41A] tracking-[0.24px] mb-[4px]">
                 {questionsDue} Soal
               </p>
               <p className="text-[20px] font-medium leading-[24px] text-white tracking-[0.1px] opacity-80">
@@ -75,9 +75,9 @@ export function CTACard({ questionsDue = 0, className }: CTACardProps) {
         <Button
           onClick={handleStartPractice}
           className={cn(
-            "h-[54px] px-6 rounded-full font-bold text-[16px] shadow-lg hover:shadow-xl transition-all duration-200",
+            "h-[54px] px-6 rounded-[8px] font-bold text-[16px] shadow-lg hover:shadow-xl transition-all duration-150",
             hasDue
-              ? "bg-[#f9bc60] hover:bg-[#f8b350] text-[#001e1d]"
+              ? "bg-[#FFA41A] hover:bg-[#ff9a00] text-[#001e1d]"
               : "bg-white hover:bg-gray-100 text-[#035855]"
           )}
           aria-label={hasDue ? "Mulai Review" : "Mulai latihan"}

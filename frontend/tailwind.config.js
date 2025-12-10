@@ -50,8 +50,8 @@ export default {
         },
         // Custom colors for dashboard
         orange: {
-          DEFAULT: "#f9bc60",
-          hover: "#f8b350",
+          DEFAULT: "#FFA41A",
+          hover: "#ff9a00",
         },
         green: {
           DEFAULT: "#498376",

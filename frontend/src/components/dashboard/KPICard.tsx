@@ -28,7 +28,7 @@ export function KPICard({ icon: Icon, title, value, className }: KPICardProps) {
       className={cn(
         "bg-white rounded-[20px] shadow-[0px_4px_15px_0px_rgba(0,0,0,0.05)]",
         "h-[193px] w-full",
-        "hover:shadow-lg transition-shadow duration-200",
+        "hover:shadow-lg transition-shadow duration-150",
         className
       )}
     >
