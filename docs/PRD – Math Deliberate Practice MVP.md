@@ -170,16 +170,35 @@ Dashboard shows:
 
 3. Frontend shows questions one-by-one:
    ├─ Question text + diagram (if any)
-   ├─ Input: MCQ buttons (A/B/C/D/E) or text field
+   ├─ Input: MCQ buttons (A/B/C/D/E)
    ├─ Submit answer
-   ├─ Brief "Tersimpan ✓" confirmation (500ms)
-   └─ Auto-advance to next question
+   ├─ ASK CONFIDENCE (before revealing correctness):
+   │  ├─ Prompt: "Seberapa yakin kamu dengan jawaban ini?"
+   │  ├─ Display 3 buttons:
+   │  │  ├─ "Tebakan" (Just guessed)
+   │  │  ├─ "Cukup yakin" (Pretty sure)
+   │  │  └─ "Sangat yakin" (Very sure)
+   │  └─ Student selects confidence level
+   ├─ REVEAL RESULT:
+   │  ├─ If CORRECT:
+   │  │  ├─ Show ✅ "Benar!"
+   │  │  ├─ Map confidence to FSRS rating:
+   │  │  │  ├─ "Tebakan" → Rating.Hard
+   │  │  │  ├─ "Cukup yakin" → Rating.Good
+   │  │  │  └─ "Sangat yakin" → Rating.Easy
+   │  │  └─ [Lanjut] button
+   │  └─ If INCORRECT:
+   │     ├─ Show ❌ "Salah"
+   │     ├─ Show correct answer: "Jawaban yang benar: C"
+   │     ├─ Show brief explanation (if available)
+   │     ├─ FSRS rating set to Rating.Again (confidence ignored for scheduling)
+   │     ├─ Store confidence for overconfidence analytics
+   │     └─ [Lanjut] button
+   └─ Click [Lanjut] → Next question
 
 4. After last question:
    ├─ Mark session as complete
-   ├─ Run FSRS updates:
-   │  ├─ Correct → rating "good"
-   │  └─ Incorrect → rating "again"
+   ├─ FSRS updates already applied per-question
    └─ Redirect to Session Summary
 ```
 
@@ -195,8 +214,21 @@ Dashboard shows:
 
 - Complete 15 questions without errors or page reloads
 - All questions strictly from chosen topic
+- Confidence asked BEFORE revealing correctness (prevents hindsight bias)
+- Confidence question appears for ALL answers (both correct and incorrect)
+- Result revealed after confidence selection
 - Smooth transitions between questions (no jarring UI)
 - Works on mobile (thumb-friendly buttons)
+
+**Pedagogical Rationale**:
+
+> **Why ask confidence BEFORE revealing correctness?** Research by Koriat & Bjork (2005) shows that confidence judgments made AFTER feedback are contaminated by "hindsight bias" - students retrospectively inflate their confidence after seeing they were correct. Pre-feedback confidence provides cleaner metacognitive data and better FSRS scheduling signals.
+> 
+> **Why ask for ALL answers (not just correct)?** When students are confident but WRONG, it creates productive cognitive dissonance that highlights knowledge gaps. This overconfidence detection is valuable for both immediate learning ("I was sure but made a mistake") and future analytics (identifying topics where students overestimate their understanding).
+>
+> **Why immediate feedback after confidence?** Research shows that for procedural skills like math, delayed feedback allows students to practice mistakes, reinforcing incorrect mental models. Immediate correction prevents this (Ericsson's Deliberate Practice principle).
+> 
+> **Why confidence ratings?** FSRS is designed for 4 ratings to differentiate "barely right" from "mastered". Binary correct/incorrect loses valuable learning signal. Confidence is a validated proxy for retention strength (Bjork, 1994).
 
 ---
 
@@ -238,6 +270,10 @@ Dashboard shows:
 - Wrong answers clearly highlighted in separate section
 - Can click to view full question (read-only)
 - Clear CTAs for next action
+
+**Pedagogical Rationale**:
+
+> **Why highlight mistakes prominently?** Error-focused feedback is more effective than general praise for procedural learning (Hattie & Timperley, 2007). By showing "Soal yang Salah" first, students immediately focus on what needs improvement, aligning with growth mindset principles (Dweck, 2006). The full question list provides context without overwhelming the learner.
 
 ---
 
@@ -399,11 +435,23 @@ LIMIT :remaining_slots;
 
 **Library**: Use `ts-fsrs` (TypeScript) or `py-fsrs` (Python)
 
-**Simplified mapping**:
+**3-Rating System with Confidence**:
 
 ```javascript
 // When user answers a question:
-const rating = isCorrect ? Rating.Good : Rating.Again;
+let rating;
+
+if (isCorrect) {
+  // User selects confidence level
+  switch (confidenceLevel) {
+    case 'guessed':      rating = Rating.Hard; break;
+    case 'pretty_sure':  rating = Rating.Good; break;
+    case 'very_sure':    rating = Rating.Easy; break;
+  }
+} else {
+  // Incorrect always maps to "Again"
+  rating = Rating.Again;
+}
 
 // Update FSRS state
 const card = new Card(currentState);
@@ -419,15 +467,20 @@ updateUserQuestionState({
 });
 ```
 
-**FSRS parameters** (tunable):
+**FSRS parameters** (evidence-based):
 
 ```javascript
 const fsrs = new FSRS({
-  requestRetention: 0.9,  // Aggressive for exam prep
-  maximumInterval: 365,   // Max 1 year between reviews
+  requestRetention: 0.85,  // Optimal learning efficiency (not 0.9)
+  maximumInterval: 180,    // 6 months max (exam-aware)
   w: [/* default weights */]
 });
 ```
+
+**Rationale for Parameters**:
+
+- **0.85 retention**: Research shows ~85% is the "sweet spot" for learning efficiency. 90% leads to over-practicing easy material (diminishing returns).
+- **180-day max interval**: For exam prep, questions shouldn't disappear for a full year. 6 months allows for adequate long-term retention without excessive gaps.
 
 **Data model**:
 
@@ -559,7 +612,8 @@ Content-Type: application/json
 {
   "user_id": "12345678",
   "question_id": "q_001",
-  "answer": "A"
+  "answer": "A",
+  "confidence": "pretty_sure"  // Optional: only if answer is correct
 }
 ```
 
@@ -569,11 +623,14 @@ Content-Type: application/json
 {
   "success": true,
   "is_correct": false,
-  "remaining_questions": 14
+  "correct_answer": "C",
+  "explanation": "SPLDV diselesaikan dengan metode eliminasi: 2x + 3y = 12...",
+  "remaining_questions": 14,
+  "fsrs_rating": "again"  // For debugging/transparency
 }
 ```
 
-**Note**: We don't reveal the correct answer yet (wait for session summary)
+**Note**: Correct answer and explanation are now returned immediately for instant feedback
 
 ---
 
@@ -841,9 +898,11 @@ CREATE TABLE session_items (
 
 ### 12.1 RESOLVED
 
-- ✅ **Session size**: Fixed at 15 questions
-- ✅ **FSRS rating**: Always use "good" (correct) or "again" (incorrect)
-- ✅ **Explanations**: Optional field, won't populate for MVP
+- ✅ **Session size**: Fixed at 15 questions (MVP); adaptive sizing considered for v1.1
+- ✅ **FSRS rating**: Use 3-rating system (Easy/Good/Hard/Again) with confidence proxy
+- ✅ **Feedback timing**: Immediate feedback after each question (not delayed to end)
+- ✅ **FSRS retention**: Set to 0.85 (not 0.9) for optimal learning efficiency
+- ✅ **Explanations**: Optional field, show if available (brief hints only)
 
 ### 12.2 TO DECIDE
 
@@ -871,18 +930,876 @@ This MVP is "done" when:
 
 ---
 
-## 14. Future Ideas (Post-MVP)
+## 14. Post-MVP Roadmap
 
-If this turns out to be fun and useful:
+This roadmap is informed by the **Pedagogy & Mastery Learning Review** (see `docs/Pedagogy & Mastery Learning Review.md`). Features are prioritized by pedagogical impact first, then user experience and platform maturity.
 
-- 📚 Step-by-step solution explanations
-- 📹 Video hints from YouTube
-- 🎯 Custom practice sets (pick specific questions)
-- 📊 Progress charts (visual FSRS data)
-- 🤝 Study groups (practice together)
-- 🎨 Dark mode
-- 📱 PWA (installable web app)
-- 🔀 Question randomization engine (slightly modify numbers)
+---
+
+### 14.1 v1.1 – Sparring Mode (Priority #1) 🥊
+
+**Timeline**: +1 week after MVP validation  
+**Development Estimate**: 3-4 days  
+**Pedagogical Foundation**: Addresses [Pedagogy Review Issue #9] - Lack of interleaved practice
+
+#### Overview
+
+**Sparring Mode** is a mastery-gated challenge mode that tests learned material across multiple topics with time pressure and interleaved question ordering.
+
+**Learning Objectives**:
+- **Interleaving Effect**: Mixing topics improves long-term retention and transfer (Rohrer & Taylor, 2007)
+- **Retrieval Practice**: Testing strengthens memory more than re-study (Roediger & Karpicke, 2006)  
+- **Desirable Difficulties**: Time pressure + mixed context = productive struggle (Bjork & Bjork, 2011)
+- **Exam Readiness**: Simulates real UN exam conditions (mixed topics, time constraints)
+
+**User Value**: "Am I actually ready for the exam across all topics?"
+
+---
+
+#### Unlock System
+
+Sparring Mode unlocks when user reaches mastery threshold:
+
+```yaml
+Unlock Condition:
+  - Master 3+ topics at ≥80% accuracy
+  - Minimum 15 questions attempted per topic
+  - FSRS state: majority in "review" (not "new")
+
+Calculation:
+  topicMastery = (correct_answers / total_attempts) >= 0.80
+  minAttempts = total_attempts >= 15
+  eligibleTopics = topics.filter(t => topicMastery && minAttempts)
+  
+  isUnlocked = eligibleTopics.length >= 3
+```
+
+**UI Messaging**:
+
+```
+🔒 Sparring Mode (Locked)
+   Test your skills across multiple topics
+   
+   Unlock requirement: Master 3 topics at 80%+
+   Progress: 1/3 topics mastered
+   
+   ✅ Aljabar Linear (92% - Mastered!)
+   🔄 SPLDV (73% - Keep practicing)
+   🔄 Geometri (45% - Needs work)
+```
+
+---
+
+#### Question Selection Algorithm
+
+**Strategy**: Multi-topic FSRS review with interleaving
+
+```javascript
+// Sparring session builder
+async function buildSparringSession(userId) {
+  // Step 1: Get user's mastered topics
+  const masteredTopics = await getMasteredTopics(userId, {
+    minAccuracy: 0.80,
+    minAttempts: 15
+  });
+  
+  // Step 2: Pull FSRS-due questions from ALL mastered topics
+  const questions = await db.query(`
+    SELECT q.*, uqs.next_due_at
+    FROM questions q
+    JOIN user_question_state uqs ON q.id = uqs.question_id
+    WHERE uqs.user_id = $1
+      AND q.topic_id IN ($2)  -- Multiple topics
+      AND uqs.next_due_at <= NOW()
+    ORDER BY uqs.next_due_at ASC
+    LIMIT 20
+  `, [userId, masteredTopics.map(t => t.id)]);
+  
+  // Step 3: Shuffle to interleave topics
+  const shuffled = shuffle(questions);
+  
+  return {
+    session_id: generateId(),
+    mode: 'sparring',
+    questions: shuffled,
+    topic_mix: unique(shuffled.map(q => q.topic_name)),
+    suggested_time_per_q: calculateAdaptiveTime(userId) // User's avg * 0.8
+  };
+}
+```
+
+**Key Design Decisions**:
+- ✅ Reuses FSRS `next_due_at` (not separate question pool)
+- ✅ Interleaves by shuffling (prevents topic blocking)
+- ✅ Limited to 20 questions (prevents fatigue)
+- ✅ Only includes mastered topics (quality assurance)
+
+---
+
+#### Time Pressure Mechanics
+
+**Goal**: Add "desirable difficulty" without causing anxiety
+
+**Implementation**: Adaptive soft timer
+
+```javascript
+// Calculate personalized time suggestion
+function calculateAdaptiveTime(userId) {
+  const avgTime = getUserAverageAnswerTime(userId); // e.g., 40 seconds
+  const sparringTarget = avgTime * 0.8; // 20% faster (32 seconds)
+  return Math.max(sparringTarget, 20); // Minimum 20 seconds floor
+}
+```
+
+**UI Design**:
+
+```
+┌─ Question 5/20 ─────────────────────┐
+│ Topic: Geometri                      │
+│                                      │
+│ [Question text...]                   │
+│                                      │
+│ ⏱️  Time: 00:25 / 00:32 (target)    │
+│ [=========>            ] progress bar│
+│                                      │
+│ [A] [B] [C] [D] [Submit]            │
+└──────────────────────────────────────┘
+```
+
+**Visual Feedback**:
+- ✅ Green progress bar when under target time
+- ⚠️ Amber progress bar when exceeding target (but no auto-submit)
+- No countdown clock (less anxiety-inducing)
+- Post-session time analysis (not real-time pressure)
+
+**Pedagogical Rationale**:
+> Time pressure is a validated "desirable difficulty" (Bjork) BUT only when it enhances effort without causing panic. Adaptive timing personalizes the challenge, while soft limits prevent the tool from becoming a stressor instead of a learning aid.
+
+---
+
+#### Feedback Flow
+
+**Challenge**: Balance immediate feedback (prevents mistakes) with retrieval difficulty (strengthens memory)
+
+**Solution**: Hybrid approach
+
+```
+During Sparring Session:
+├─ Student submits answer
+├─ Immediate visual feedback:
+│  ├─ ✅ "Benar!" (if correct)
+│  └─ ❌ "Salah - Jawaban: C" (if incorrect)
+├─ NO confidence question (save time)
+├─ NO explanation yet (save for end)
+└─ [Lanjut] button → Next question
+
+Post-Session Review:
+├─ Show all questions with full explanation
+├─ Time analysis by topic
+├─ Performance comparison to practice mode
+└─ Recommendations for weak topics
+```
+
+**Why this works**:
+- ✅ Prevents practicing mistakes (shows correct answer immediately)
+- ✅ Creates retrieval difficulty (withholds scaffolding until end)
+- ✅ Reduces confusion (consistent correctness feedback, just delayed explanations)
+
+---
+
+#### FSRS Integration Strategy
+
+**Problem**: Should sparring mistakes "count" the same as practice mistakes?
+
+**Answer**: No - use weighted updates
+
+```javascript
+// Apply lighter penalty for sparring errors
+function updateFSRS(questionId, isCorrect, sessionMode) {
+  let rating;
+  
+  if (sessionMode === 'practice') {
+    // Practice mode: standard FSRS
+    rating = isCorrect 
+      ? confidenceLevel // Easy/Good/Hard based on confidence
+      : Rating.Again;   // Strong penalty
+      
+  } else if (sessionMode === 'sparring') {
+    // Sparring mode: softer penalties
+    rating = isCorrect
+      ? Rating.Good     // No confidence differentiation (save time)
+      : Rating.Hard;    // Lighter penalty (not "Again")
+  }
+  
+  return fsrs.repeat(card, now, rating);
+}
+```
+
+**Rationale**:
+- Sparring is harder context (time pressure + interleaving)
+- Mistakes might be retrieval failures, not knowledge gaps
+- Prevents over-penalizing students for attempting challenge mode
+- Still updates FSRS (data not wasted)
+
+---
+
+#### Data Model
+
+**Minimal schema changes** (reuses existing tables):
+
+```sql
+-- Add mode column to sessions table
+ALTER TABLE sessions 
+  ADD COLUMN mode TEXT DEFAULT 'practice'
+  CHECK (mode IN ('practice', 'sparring'));
+
+-- Add sparring metrics (optional analytics)
+ALTER TABLE sessions
+  ADD COLUMN avg_time_per_question NUMERIC,
+  ADD COLUMN target_time_per_question NUMERIC,
+  ADD COLUMN time_pressure_met BOOLEAN;
+```
+
+No new tables needed! ✅
+
+---
+
+#### API Contracts
+
+**Start Sparring Session**
+
+```http
+POST /api/sessions/sparring
+Content-Type: application/json
+
+{
+  "user_id": "12345678"
+}
+```
+
+**Response**:
+
+```json
+{
+  "session_id": "sess_spar_001",
+  "mode": "sparring",
+  "topic_mix": ["Aljabar", "Geometri", "Statistika"],
+  "question_count": 20,
+  "suggested_time_per_q": 32,
+  "questions": [
+    {
+      "id": "q_042",
+      "sequence": 1,
+      "topic": "Geometri",
+      "type": "mcq",
+      "prompt_text": "...",
+      "options": ["A) ...", "B) ...", ...]
+    },
+    // ... 19 more, interleaved topics
+  ]
+}
+```
+
+**Submit Answer** (same as practice, mode auto-detected):
+
+```http
+POST /api/sessions/{session_id}/answer
+{
+  "user_id": "12345678",
+  "question_id": "q_042",
+  "answer": "C",
+  "time_taken": 35 // seconds
+}
+```
+
+**Get Sparring Summary**:
+
+```http
+GET /api/sessions/{session_id}/summary?user_id=12345678
+```
+
+**Response**:
+
+```json
+{
+  "mode": "sparring",
+  "stats": {
+    "total": 20,
+    "correct": 16,
+    "incorrect": 4,
+    "avg_time": 35.2,
+    "target_time": 32.0,
+    "time_pressure_met": false
+  },
+  "by_topic": {
+    "Aljabar": { "correct": 6, "total": 7, "avg_time": 28 },
+    "Geometri": { "correct": 5, "total": 8, "avg_time": 48 },
+    "Statistika": { "correct": 5, "total": 5, "avg_time": 30 }
+  },
+  "recommendations": [
+    "Focus practice on: Geometri (62% accuracy)",
+    "Work on speed for: Geometri (48s avg, target 32s)"
+  ],
+  "weak_questions": [...],
+  "all_questions": [...]
+}
+```
+
+---
+
+#### UI Specifications
+
+**Dashboard Unlock Card**:
+
+```
+┌─ 🥊 Sparring Mode ────────────────────┐
+│ [UNLOCKED] ✅                          │
+│                                        │
+│ Test your skills across multiple      │
+│ topics with time-challenged questions  │
+│                                        │
+│ Topics included:                       │
+│ • Aljabar Linear                       │
+│ • SPLDV                                │
+│ • Geometri                             │
+│                                        │
+│ 20 questions • ~10 minutes             │
+│                                        │
+│ [Mulai Sparring] button               │
+└────────────────────────────────────────┘
+```
+
+**In-Session UI**:
+- Progress indicator: "Question 8/20"
+- Topic badge: "Geometri" (color-coded)
+- Timer: Progress bar (not countdown)
+- Question display (same as practice)
+- [Lanjut] button after feedback (no auto-advance)
+
+**Post-Session Summary**:
+```
+┌─ Sparring Summary ─────────────────────┐
+│ Score: 16/20 (80%)                     │
+│ Time: 35s avg (target: 32s)            │
+│                                         │
+│ 📊 By Topic:                           │
+│ ✅ Aljabar: 6/7 (85%) - 28s avg       │
+│ ⚠️ Geometri: 5/8 (62%) - 48s avg ⚠️   │
+│ ✅ Statistika: 5/5 (100%) - 30s avg   │
+│                                         │
+│ 💡 Recommendations:                    │
+│ • Practice more: Geometri              │
+│ • Work on speed: Geometri              │
+│                                         │
+│ [Review Mistakes] [Practice Geometri]  │
+│ [Spar Again] [Back to Dashboard]       │
+└─────────────────────────────────────────┘
+```
+
+---
+
+#### Success Criteria
+
+Sparring Mode is successful when:
+
+- ✅ Users with 3+ mastered topics see unlock message
+- ✅ Session builds with interleaved questions (not topic-blocked)
+- ✅ Timer displays adaptive target based on user's history
+- ✅ Feedback shows correctness immediately, explanations delayed
+- ✅ FSRS updates with weighted penalties (Hard not Again)
+- ✅ Summary shows topic-level breakdown and actionable recommendations
+- ✅ Users return to practice mode for weak topics identified by sparring
+
+---
+
+### 14.2 v1.5 – Pedagogical Enhancements
+
+**Timeline**: After Sparring Mode validation (weeks 7-9)
+
+These features address [Pedagogy Review Moderate Issues]:
+
+#### 1. **Adaptive Session Sizing** [Issue #3]
+
+```javascript
+function getSessionSize(userTopicPerformance) {
+  if (userTopicPerformance < 0.50) return 10; // Prevent frustration
+  if (userTopicPerformance > 0.80) return 20; // Maintain flow
+  return 15; // Default
+}
+```
+
+**Or**: User choice - "Quick (10) | Normal (15) | Long (20)"
+
+#### 2. **Mistake Categorization** [Issue #6]
+
+After incorrect answer, ask:
+- "Salah hitung?" (Calculation error)
+- "Tidak paham konsep?" (Conceptual misunderstanding)
+
+Tracks patterns in dashboard: "80% of your mistakes are calculation errors"
+
+#### 3. **Mastery Progress Visualization** [Issue #10]
+
+```
+Topic Mastery Dashboard:
+┌─ Your Progress ────────────────┐
+│ Aljabar Linear: ████████░░ 85% │
+│ Status: Ready for Exam ✅      │
+│ Last practiced: 2 days ago     │
+│                                 │
+│ Geometri: ████░░░░░░ 45%      │
+│ Status: Needs practice ⚠️      │
+│ [Practice Now]                 │
+└─────────────────────────────────┘
+```
+
+#### 4. **Diagnostic Test** [Issue #4]
+
+5-question quick assessment for new topics to seed FSRS states:
+- Easy (2Q)
+- Medium (2Q)  
+- Hard (1Q)
+
+Avoids "all new" state for users with existing knowledge.
+
+#### 5. **Progressive Difficulty Ordering** [Issue #8]
+
+```sql
+-- For new questions, order by difficulty
+SELECT * FROM questions
+WHERE user never attempted
+ORDER BY difficulty_rating ASC -- Easy → Medium → Hard
+```
+
+#### 6. **Exam Countdown Mode** [Issue #5]
+
+```javascript
+// Adjust max interval based on exam date
+const daysUntilExam = (examDate - today) / (1000 * 60 * 60 * 24);
+const maxInterval = Math.min(180, daysUntilExam / 3);
+```
+
+User sets UN exam date → FSRS auto-adjusts to ensure coverage.
+
+---
+
+### 14.3 v2.0 – Platform Features
+
+**Timeline**: After pedagogical foundation is solid (weeks 10+)
+
+These are nice-to-have UX improvements:
+
+- 📚 **Step-by-step explanations**: Detailed solution walkthroughs
+- 📹 **Video hints**: Link to YouTube explanations
+- 🎨 **Dark mode**: Better for evening study
+- 📱 **PWA**: Installable web app (offline-capable)
+- 🎯 **Custom practice sets**: User-curated question collections
+- 🤝 **Study groups**: Collaborative practice sessions
+- 🔀 **Question variants**: Slightly modify numbers for extra practice
+- 👨‍🏫 **Teacher mode**: Custom questions for classroom use
+- 📊 **Advanced analytics**: Visual FSRS data, learning curves
+- 🌐 **Multi-language**: English version for international schools
+
+---
+
+### 14.4 Advanced Analytics & Insights
+
+**Timeline**: Post v2.0 (requires sufficient usage data)
+
+These features leverage the confidence rating system and session data to provide actionable learning insights:
+
+#### 1. **Overconfidence Analytics** 🎯
+
+**Purpose**: Identify topics where students overestimate their understanding
+
+**Data Collection**:
+```javascript
+// Store confidence + correctness pairs
+session_item {
+  confidence_level: "guessed" | "pretty_sure" | "very_sure"
+  is_correct: boolean
+  answered_at: timestamp
+}
+
+// Detect overconfidence patterns
+overconfidenceRate = 
+  count(confidence="very_sure" AND is_correct=false) /
+  count(confidence="very_sure")
+```
+
+**Dashboard Display**:
+```
+⚠️ Overconfidence Alert: Geometri
+┌───────────────────────────────────────┐
+│ You marked 8 questions as "Sangat     │
+│ yakin" but got 5 wrong (62% wrong)    │
+│                                        │
+│ This suggests you may have gaps in:   │
+│ • Triangle similarity concepts        │
+│ • Pythagorean theorem applications    │
+│                                        │
+│ 💡 Recommendation: Review fundamentals │
+│ before attempting more questions       │
+│                                        │
+│ [Practice Geometri Basics]            │
+└───────────────────────────────────────┘
+```
+
+**Pedagogical Value**: 
+> Overconfidence detection addresses the Dunning-Kruger effect in math learning. Students often feel confident with procedural steps but miss conceptual foundations. Flagging this prevents practicing with flawed mental models (Kruger & Dunning, 1999).
+
+---
+
+#### 2. **Learning Velocity Metrics** 📈
+
+**Metrics**:
+- **Questions/week**: Track practice consistency
+- **Accuracy trend**: 7-day rolling average by topic
+- **FSRS progression**: % of questions in "review" vs "new" state
+- **Retention rate**: % of previously correct questions still correct after FSRS review
+
+**Dashboard Visualization**:
+```
+📊 Your Learning Trajectory (Last 30 Days)
+┌─────────────────────────────────────────┐
+│ Aljabar Linear                          │
+│ Accuracy: 72% → 85% (+13%) ↗️          │
+│ Practice sessions: 12                   │
+│ Review state: 78% (Strong retention!)   │
+│                                          │
+│ Geometri                                │
+│ Accuracy: 45% → 48% (+3%) →            │
+│ Practice sessions: 4 ⚠️                 │
+│ Review state: 23% (Needs more practice) │
+└─────────────────────────────────────────┘
+```
+
+**Alerts**:
+- ⚠️ "You haven't practiced Statistika in 14 days - knowledge decay likely"
+- 🎉 "Accuracy improved 20% this week - great progress!"
+
+---
+
+#### 3. **Mistake Pattern Recognition** 🔍
+
+**Auto-detect common error types**:
+```javascript
+// Example pattern detection
+const patterns = {
+  "sign_errors": detectPatterns(["+/-", "negative numbers"]),
+  "order_of_operations": detectPatterns(["PEMDAS", "bracket errors"]),
+  "unit_conversion": detectPatterns(["cm → m", "time units"]),
+  "algebraic_manipulation": detectPatterns(["factoring", "expanding"])
+};
+
+// Example: If 70% of Aljabar mistakes involve sign errors
+showInsight("Most of your Aljabar mistakes are sign errors. Practice: negative number operations.");
+```
+
+**Implementation**:
+- Tag questions with error categories during content ingestion
+- Compare user's wrong answers to common misconception patterns
+- Generate targeted micro-lessons
+
+**User Benefit**: Precision guidance ("Practice sign rules") vs vague advice ("Study more")
+
+---
+
+#### 4. **Confidence Calibration Score** 🎓
+
+**Measure how well student self-assessment matches actual performance**:
+
+```javascript
+function calculateCalibration(userId, topicId) {
+  const sessions = getSessionData(userId, topicId);
+  
+  const calibrationScore = sessions.reduce((score, item) => {
+    // Perfect calibration examples:
+    // - "very_sure" + correct = +1
+    // - "guessed" + incorrect = +1
+    // - "very_sure" + incorrect = -2 (overconfident penalty)
+    // - "guessed" + correct = -1 (underconfident, less severe)
+    
+    if (item.confidence === "very_sure" && item.is_correct) return score + 1;
+    if (item.confidence === "guessed" && !item.is_correct) return score + 1;
+    if (item.confidence === "very_sure" && !item.is_correct) return score - 2;
+    if (item.confidence === "guessed" && item.is_correct) return score - 0.5;
+    return score;
+  }, 0);
+  
+  return normalize(calibrationScore); // 0-100 scale
+}
+```
+
+**Dashboard Display**:
+```
+🎯 Confidence Calibration: 78/100
+┌────────────────────────────────────────┐
+│ You accurately predict your performance│
+│ most of the time!                      │
+│                                         │
+│ Breakdown:                              │
+│ ✅ Correct confidence: 82%             │
+│ ⚠️ Overconfident: 12% (improve this)   │
+│ 🤔 Underconfident: 6%                  │
+│                                         │
+│ Tip: When unsure, mark "Ragu" to get   │
+│ better FSRS scheduling.                 │
+└────────────────────────────────────────┘
+```
+
+**Pedagogical Foundation**: Metacognitive accuracy (knowing what you know) predicts learning success (Bjork, 1999). Teaching students to self-assess accurately is a transferable skill.
+
+---
+
+#### 5. **Topic Mastery Heatmap** 🗺️
+
+**Visual representation of knowledge across curriculum**:
+
+```
+Your SMP Math Mastery Map
+┌─────────────────────────────────────────┐
+│        ALJABAR          GEOMETRI        │
+│   ┌──────┐  ┌──────┐  ┌──────┐         │
+│   │Linear│  │SPLDV │  │Bangun│         │
+│   │ 92%  │→ │ 85%  │  │Datar │         │
+│   │  🟢  │  │  🟢  │  │ 48%  │         │
+│   └──────┘  └──────┘  │  🟡  │         │
+│                        └──────┘         │
+│      STATISTIKA         PELUANG        │
+│   ┌──────┐  ┌──────┐  ┌──────┐         │
+│   │Mean  │  │Median│  │Dasar │         │
+│   │ 78%  │  │ 65%  │  │ 35%  │         │
+│   │  🟢  │  │  🟡  │  │  🔴  │         │
+│   └──────┘  └──────┘  └──────┘         │
+│                                         │
+│ 🟢 Mastered (≥80%) 🟡 Learning 🔴 Weak │
+└─────────────────────────────────────────┘
+```
+
+**Features**:
+- Color-coded mastery levels
+- Topic dependency arrows (e.g., Linear → SPLDV)
+- Click to drill into sub-topics
+- Visual progress over time (animated heatmap replay)
+
+---
+
+#### 6. **Comparative Analytics** 📊
+
+**Benchmark against anonymized cohort data**:
+
+```
+Your Performance vs Peers (SMP Class 9)
+┌────────────────────────────────────────┐
+│ Aljabar Linear                         │
+│ You: 85% ████████░░                    │
+│ Avg: 72% ███████░░░ (+13% above avg!) │
+│                                         │
+│ Geometri                               │
+│ You: 48% ████░░░░░░                    │
+│ Avg: 68% ██████░░░░ (-20% below avg)  │
+│ 💡 Most students master this in 8      │
+│    practice sessions                    │
+└────────────────────────────────────────┘
+```
+
+**Privacy-preserving**:
+- Only show aggregated cohort averages
+- No individual student comparisons
+- Opt-in feature
+
+**Motivational Impact**: Social comparison can drive engagement when framed as informational (not competitive)
+
+---
+
+#### 7. **Predictive Exam Readiness** 🎯
+
+**Use FSRS data to predict UN exam performance**:
+
+```javascript
+function calculateExamReadiness(userId, gradeLevel) {
+  const topics = getTopicsForGrade(gradeLevel);
+  
+  const readiness = topics.map(topic => {
+    const masteryScore = getTopicMastery(userId, topic.id);
+    const retentionStrength = getAvgFSRSStability(userId, topic.id);
+    const recentActivity = getSessionsLast30Days(userId, topic.id);
+    
+    // Weighted formula
+    return {
+      topic: topic.name,
+      score: (masteryScore * 0.5) + (retentionStrength * 0.3) + (recentActivity * 0.2),
+      prediction: mapToPrediction(score) // "Pass", "Borderline", "At Risk"
+    };
+  });
+  
+  return readiness;
+}
+```
+
+**Dashboard Display**:
+```
+🎓 UN Exam Readiness Prediction
+┌────────────────────────────────────────┐
+│ Overall: 78% likely to pass            │
+│ Confidence: Medium                     │
+│                                         │
+│ Strong Topics (90%+ predicted):        │
+│ ✅ Aljabar Linear                      │
+│ ✅ SPLDV                               │
+│ ✅ Statistika                          │
+│                                         │
+│ ⚠️ At Risk Topics (need practice):     │
+│ 🔴 Geometri (45% predicted)            │
+│ 🟡 Peluang (68% predicted)             │
+│                                         │
+│ 📅 52 days until exam                  │
+│ Suggested focus: 3 Geometri sessions/wk│
+│                                         │
+│ [Create Study Plan]                    │
+└────────────────────────────────────────┘
+```
+
+**Ethical Considerations**:
+- Frame as "suggested focus areas" not definitive predictions
+- Emphasize actionability (what to practice) over labeling
+- Include disclaimer about prediction limitations
+
+---
+
+#### 8. **Session Insights & Post-Practice Reflection** 💭
+
+**Immediate post-session metacognitive prompts**:
+
+After completing practice session:
+```
+📝 Quick Reflection
+┌────────────────────────────────────────┐
+│ How did this session feel?             │
+│ 😫 Frustrating  😐 Okay  😊 Good       │
+│                                         │
+│ Any questions make you realize gaps?   │
+│ [ ] Yes → [Tell us which ones]         │
+│ [ ] No, felt confident                 │
+│                                         │
+│ [Skip] [Submit Reflection]             │
+└────────────────────────────────────────┘
+```
+
+**Use reflection data to**:
+- Adjust FSRS difficulty parameters
+- Identify questions that confuse students (flag for review)
+- Personalize encouragement messages
+
+---
+
+#### 9. **Learning Insights Dashboard** 🧠
+
+**Consolidated "meta-learning" page**:
+
+```
+Your Learning Profile
+┌─────────────────────────────────────────┐
+│ 🎯 Calibration Score: 78/100           │
+│ 📈 Avg Weekly Progress: +5% accuracy  │
+│ ⚠️ Overconfidence Rate: 12%            │
+│                                         │
+│ 🔥 Best Learning Time: 7-9 PM          │
+│ 📅 Most Productive Days: Tue, Thu      │
+│ ⏱️ Optimal Session Length: 18 min      │
+│                                         │
+│ 🎓 Learning Style Insights:            │
+│ • You improve faster with shorter,     │
+│   more frequent sessions                │
+│ • Geometry needs visual aids (90% of   │
+│   mistakes are spatial reasoning)       │
+│ • You retain Algebra best (95%         │
+│   retention after 30 days)              │
+│                                         │
+│ 💡 Personalized Recommendations:       │
+│ • Schedule Geometri practice at 7 PM   │
+│   on Tuesdays                           │
+│ • Use 10-question sessions for new     │
+│   topics (instead of 15)                │
+│ • Review Aljabar Linear every 14 days  │
+│   (optimal for your retention curve)    │
+└─────────────────────────────────────────┘
+```
+
+**Data Sources**:
+- Session timestamps → identify peak learning times
+- Session length vs accuracy → optimize duration
+- Topic-specific retention curves → personalize FSRS
+- Confidence patterns → metacognitive awareness
+
+---
+
+#### Implementation Priorities
+
+**Phase 1 (Quick Wins)**:
+1. Overconfidence alerts (low complexity, high pedagogical impact)
+2. Topic mastery heatmap (visual, motivating)
+3. Learning velocity metrics (simple aggregation)
+
+**Phase 2 (Data-Dependent)**:
+4. Mistake pattern recognition (requires ML or manual tagging)
+5. Confidence calibration scoring (needs statistical modeling)
+6. Session insights prompts (adds friction, test carefully)
+
+**Phase 3 (Advanced)**:
+7. Predictive exam readiness (requires validation dataset)
+8. Comparative analytics (needs user base + privacy design)
+9. Learning insights dashboard (synthesizes all above)
+
+**Technical Requirements**:
+- Analytics data warehouse (separate from operational DB)
+- Background job processing for metric calculations
+- Privacy-preserving aggregation methods
+- A/B testing framework to validate pedagogical impact
+
+**Success Metrics**:
+- Analytics feature adoption rate
+- User-reported actionability ("Did this insight change your practice?")
+- Correlation between insight engagement and learning outcomes
+
+---
+
+## 15. Learning Science References
+
+The pedagogical decisions in this PRD are grounded in the following research:
+
+### Spaced Repetition & Optimal Difficulty
+- **Bjork, R. A., & Bjork, E. L. (2011).** Making things hard on yourself, but in a good way: Creating desirable difficulties to enhance learning. *Psychology and the Real World*, 56-64.
+- **Ebbinghaus, H. (1885).** Memory: A contribution to experimental psychology.
+
+### Deliberate Practice
+- **Ericsson, K. A., Krampe, R. T., & Tesch-Römer, C. (1993).** The role of deliberate practice in the acquisition of expert performance. *Psychological Review*, 100(3), 363-406.
+
+### Testing Effect & Retrieval Practice
+- **Roediger, H. L., & Karpicke, J. D. (2006).** Test-enhanced learning: Taking memory tests improves long-term retention. *Psychological Science*, 17(3), 249-255.
+
+### Interleaving
+- **Rohrer, D., & Taylor, K. (2007).** The shuffling of mathematics problems improves learning. *Instructional Science*, 35(6), 481-498.
+
+### Mastery Learning
+- **Bloom, B. S. (1968).** Learning for mastery. *Evaluation Comment*, 1(2), 1-12.
+
+### Feedback & Growth Mindset
+- **Dweck, C. S. (2006).** *Mindset: The new psychology of success*. Random House.
+- **Hattie, J., & Timperley, H. (2007).** The power of feedback. *Review of Educational Research*, 77(1), 81-112.
+
+### Metacognition
+- **Flavell, J. H. (1979).** Metacognition and cognitive monitoring: A new area of cognitive–developmental inquiry. *American Psychologist*, 34(10), 906-911.
+
+### Confidence Ratings & Self-Assessment
+- **Bjork, R. A. (1994).** Memory and metamemory considerations in the training of human beings. In J. Metcalfe & A. Shimamura (Eds.), *Metacognition: Knowing about knowing* (pp. 185-205). MIT Press.
+
+---
+
+**For detailed analysis**, see [`docs/Pedagogy & Mastery Learning Review.md`](file:///c:/Users/albar/Documents/01%20Projects/mikir%20kids/docs/Pedagogy%20&%20Mastery%20Learning%20Review.md).
+
+---
 
 But for now: **Keep it simple, make it work.**
 

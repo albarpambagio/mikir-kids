@@ -32,6 +32,8 @@
 
 **Success Criteria:**
 - ✅ User can get User ID and complete full session without bugs
+- ✅ Immediate feedback shown after each question (prevents practicing mistakes)
+- ✅ Confidence ratings captured for correct answers
 - ✅ FSRS scheduling works (questions come back at smart intervals)
 - ✅ Mobile experience doesn't feel broken
 - ✅ Friend can use it without asking "how does this work?"
@@ -187,16 +189,26 @@
 **Goal**: User can answer questions one-by-one
 
 - [x] **UI Components** ✅ Complete
-  - [x] PracticeSession page
+  - [x] PracticeSession page with two-column layout
   - [x] Question display (text + image support)
-  - [x] MCQ buttons / numeric input
-  - [x] Progress indicator
-  - [x] Answer submission flow
-  - [x] Question navigation sidebar
-  - [x] PracticeFeedback page
-  - [x] Session summary display
-  - [x] Correct/Incorrect answer visualization
-  - [x] Question results cards
+  - [x] MCQ buttons with Figma-accurate styling
+  - [x] Progress indicator (orange bar with question count)
+  - [x] Question navigation sidebar (5-column grid)
+  - [x] Navigation state tracking (active/completed/unanswered)
+  - [x] ConfidenceSelector component with emoji icons (😕 😊 😁)
+  - [x] Two-step confidence submission (select → Submit button)
+  - [x] ResultCard component (correct/incorrect feedback)
+  - [x] Explanation sections for both correct and incorrect answers
+  - [x] Next review schedule display ("📅 Review selanjutnya: 10 menit lagi")
+
+- [x] **Figma Design Implementation** ✅ Complete
+  - [x] Exact color matching (#f9bc60, #fef2f2, #f0fdf4, etc.)
+  - [x] Emoji rendering using emoji-picker-react
+  - [x] Confidence selector: 3-column vertical layout with emojis
+  - [x] Result cards: pink/red for incorrect, green for correct
+  - [x] White explanation boxes with 💡 icon
+  - [x] Navigation states: yellow outline (active), orange fill (completed)
+  - [x] Persistent MCQ layout (no page transitions)
 
 - [x] **Backend APIs** ✅ Complete
   - [x] `POST /api/sessions/{sessionId}/answer`
@@ -207,13 +219,21 @@
   - [ ] Connect to backend Session API
   - [ ] Real-time answer submission
   - [ ] Auto-advance to next question
-  - [ ] "Tersimpan" confirmation
   - [ ] Session abandonment handling
-  - [ ] Navigate to feedback on completion
+  - [ ] Navigate to summary on completion
 
-**Status**: 🟡 In Progress (Frontend UI Complete, Integration Pending)
+**Status**: � UI Complete, 🟡 Integration Pending  
 **Dependencies**: Phase 3 complete ✅  
-**Estimated Time**: 2-3 days (Integration only)
+**Estimated Time**: 1-2 days (Integration only)
+
+**Recent Updates** (2025-12-10):
+- ✅ Implemented Figma-accurate confidence selector with emoji icons
+- ✅ Added Submit button for two-step confidence flow
+- ✅ Updated ResultCard with exact Figma colors and styling
+- ✅ Added explanation sections for correct answers
+- ✅ Implemented next review schedule display
+- ✅ Added navigation state tracking (active vs completed)
+- ✅ Changed active state to yellow outline for better differentiation
 
 ---
 
@@ -240,11 +260,37 @@
 ### **Phase 6: Session Summary** (Week 4)
 **Goal**: User can review results and see weak questions
 
-- [x] **UI Components** ✅ Complete (PracticeFeedback.tsx)
-  - [x] SessionSummary page (implemented as PracticeFeedback)
-  - [x] Weak questions section (correct/incorrect map)
-  - [x] All questions list (question result cards)
-  - [x] Score display (total score + retention)
+- [x] **UI Components** ✅ Complete
+  - [x] SessionSummary page with modern design
+  - [x] Emoji stats cards (🎉 Correct, 💪 Incorrect, ⭐ Score)
+  - [x] Correct/Incorrect visual map (green checkmarks, red X marks)
+  - [x] Enhanced question result cards with color-coded borders
+  - [x] Status badges (✓ Jawaban Benar, ✗ Jawaban Salah)
+  - [x] Highlighted user answer vs correct answer
+  - [x] White explanation boxes with 💡 icon
+  - [x] Next review schedule display for incorrect answers
+  - [x] Action buttons (Back to Dashboard, Practice Again)
+
+- [ ] **Backend APIs** (Integration needed)
+  - [ ] `GET /api/sessions/{sessionId}/summary`
+  - [ ] Session results aggregation
+  - [ ] Pass session data via navigation state
+
+- [ ] **Features** (Integration needed)
+  - [ ] Connect to backend Summary API
+  - [ ] Display actual session results
+  - [ ] Navigate back to dashboard
+  - [ ] "Practice Again" functionality
+
+**Status**: 🟢 UI Complete, 🟡 Integration Pending  
+**Dependencies**: Phase 4 complete  
+**Estimated Time**: 1 day (Integration only)
+
+**Recent Updates** (2025-12-10):
+- ✅ Refactored with emoji stats cards for better visual appeal
+- ✅ Added enhanced question result cards with color-coded borders
+- ✅ Implemented next review schedule display for incorrect answers
+- ✅ Added action buttons for navigation
 
 - [ ] **Backend APIs** (Integration needed)
   - [ ] `GET /api/sessions/{sessionId}/summary`
@@ -506,8 +552,14 @@ mikir-kids/
 - **Auth System**: User ID only (8-digit numeric, no passwords)
 - **Tech Stack**: React + Vite (frontend), FastAPI (backend), Supabase (database)
 - **Deployment**: Cloudflare Pages (frontend), Railway (backend)
-- **Session Size**: Fixed at 15 questions
-- **FSRS Rating**: Binary (correct = "good", incorrect = "again")
+- **Session Size**: Fixed at 15 questions (MVP); adaptive sizing in v1.5
+- **FSRS Rating**: 3-level confidence-based (Easy/Good/Hard/Again)
+  - Correct + "Sangat yakin" → Easy
+  - Correct + "Cukup yakin" → Good
+  - Correct + "Tebakan" → Hard
+  - Incorrect → Again
+- **FSRS Parameters**: 0.85 retention (optimal learning efficiency), 180-day max interval
+- **Feedback Timing**: Immediate per-question (not delayed to end)
 - **UI Framework**: shadcn/ui + Tailwind CSS
 
 ### ❓ **To Decide**
@@ -617,6 +669,74 @@ mikir-kids/
 
 ---
 
+## 🗺️ **Post-MVP Roadmap**
+
+After MVP completion, features are prioritized by **pedagogical impact** (informed by [Pedagogy & Mastery Learning Review](./Pedagogy%20&%20Mastery%20Learning%20Review.md)).
+
+### **v1.1 – Sparring Mode** 🥊 (Priority #1)
+
+**Timeline**: +1 week after MVP validation  
+**Development**: 3-4 days  
+**Pedagogical Foundation**: Addresses interleaved practice gap (Rohrer & Taylor, 2007)
+
+**What it is**: Mastery-gated challenge mode that tests learned material across multiple topics with time pressure.
+
+**Key Features**:
+- **Unlock**: After mastering 3+ topics at 80%+ accuracy
+- **Interleaving**: Mix questions from all mastered topics (not topic-blocked)
+- **Time Pressure**: Adaptive soft timer (user's average × 0.8)
+- **Feedback**: Immediate correctness, delayed explanations
+- **FSRS**: Weighted updates (lighter penalties for challenge context)
+
+**Learning Objectives**:
+- Interleaving improves long-term retention (Rohrer & Taylor, 2007)
+- Retrieval practice strengthens memory (Roediger & Karpicke, 2006)
+- Desirable difficulties enhance learning (Bjork & Bjork, 2011)
+- Exam readiness through mixed-topic simulation
+
+**Why Priority #1**: 
+- Low complexity (reuses 80% of practice mode code)
+- High pedagogical value (addresses critical gap)
+- Natural progression mechanism (unlocks after mastery)
+
+**See**: [PRD Section 14.1](./PRD%20–%20Math%20Deliberate%20Practice%20MVP.md#141-v11--sparring-mode-priority-1-) for full specification
+
+---
+
+### **v1.5 – Pedagogical Enhancements** 📚
+
+**Timeline**: Weeks 7-9 after MVP  
+**Addresses**: [Pedagogy Review Moderate Issues]
+
+1. **Adaptive Session Sizing** - Adjust 10/15/20 questions based on performance
+2. **Mistake Categorization** - Tag errors as "Calculation" vs "Conceptual"
+3. **Mastery Progress Visualization** - Show "85% Mastered - Ready for Exam"
+4. **Diagnostic Test** - 5-question assessment to seed FSRS states
+5. **Progressive Difficulty** - Order new questions Easy → Medium → Hard
+6. **Exam Countdown Mode** - Adjust intervals based on UN exam date
+
+---
+
+### **v2.0 – Platform Features** 🚀
+
+**Timeline**: After pedagogical foundation is solid (weeks 10+)
+
+Nice-to-have UX improvements:
+- 📚 Step-by-step explanations
+- 📹 Video hints (YouTube integration)
+- 🎨 Dark mode
+- 📱 PWA (installable, offline-capable)
+- 🎯 Custom practice sets
+- 🤝 Study groups
+- 🔀 Question variants
+- 👨‍🏫 Teacher mode
+- 📊 Advanced analytics
+- 🌐 Multi-language support
+
+**See**: [PRD Section 14](./PRD%20–%20Math%20Deliberate%20Practice%20MVP.md#14-post-mvp-roadmap) for detailed roadmap
+
+---
+
 ## 🔄 **How to Update This Document**
 
 As you make progress:
@@ -672,11 +792,20 @@ As you make progress:
 
 ---
 
-**Last Updated**: December 9, 2024  
+**Last Updated**: December 10, 2024  
 **Current Phase**: Phase 3 Complete ✅, Phase 4 In Progress 🟡
 **Next Action**: Complete PracticeSession UI & Logic
 
 **Recent Accomplishments**:
+- ✅ **PRD Enhanced with Learning Science Documentation** (Dec 10)
+  - Added learning science rationales for all major pedagogical decisions
+  - Documented immediate feedback principle (Ericsson's Deliberate Practice)
+  - Explained confidence-based FSRS ratings (Bjork's metamemory research)
+  - Added error-focused feedback rationale (Hattie & Timperley, Dweck)
+  - Created comprehensive Sparring Mode specification (v1.1)
+  - Reorganized post-MVP roadmap into 3 tiers (v1.1, v1.5, v2.0)
+  - Added complete learning science bibliography (8 research citations)
+  - Document grew from 938 to 1,433 lines (+65%)
 - ✅ Phase 3 Dashboard UI fully implemented
 - ✅ Dashboard layout restructured to match Figma design (KPI cards left, CTA card right)
 - ✅ CTA card redesigned with dark teal background (#035855) and texture overlay
