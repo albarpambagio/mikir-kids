@@ -6,7 +6,6 @@ import './index.css'
 import { AuthLanding } from './pages/AuthLanding'
 import { UserIdDisplay } from './pages/UserIdDisplay'
 import { GradeSelection } from './pages/GradeSelection'
-import { Dashboard } from './pages/Dashboard'
 import { DashboardTest } from './pages/DashboardTest'
 import { EnhancedDashboard } from './pages/EnhancedDashboard'
 import { Topics } from './pages/Topics'
@@ -32,7 +31,6 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/user-id-display" element={<UserIdDisplay />} />
           <Route path="/grade-selection" element={<GradeSelection />} />
           <Route path="/dashboard" element={<EnhancedDashboard />} />
-          <Route path="/dashboard-old" element={<Dashboard />} />
           <Route path="/dashboard-test" element={<DashboardTest />} />
           <Route path="/beranda" element={<EnhancedDashboard />} />
           <Route path="/topics" element={<Topics />} />

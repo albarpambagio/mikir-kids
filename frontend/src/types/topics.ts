@@ -20,3 +20,23 @@ export interface TopicFilters {
   status: 'all' | 'new' | 'in_progress' | 'needs_review' | 'mastered'
   sortBy: 'needs_review' | 'name' | 'mastery' | 'recent'
 }
+
+// Priority item for dashboard recommendations
+export interface Priority {
+  id: string
+  number: number
+  name: string
+  status: string
+  estimatedTime: string
+  action: 'review' | 'practice'
+  topicId: string
+}
+
+// Dashboard statistics
+export interface DashboardStats {
+  questionsReview: number
+  topicsInProgress: number
+  questionsThisWeek: number
+  masteryPercentage: number
+  masteryChange: number
+}

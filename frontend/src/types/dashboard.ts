@@ -7,6 +7,8 @@ export interface DashboardStats {
 export interface TopicStat {
   topicId: string
   name: string
+  category?: string
+  grade?: string
   thumbnailUrl?: string
   questionsDue: number
   totalQuestions: number
@@ -26,4 +28,20 @@ export interface GradeFilter {
 export interface TopicFilter {
   value: string
   label: string
+}
+
+export interface Topic {
+  id: string
+  name: string
+  category: string
+  grade: string
+}
+
+export interface QuestionStats {
+  topicId?: string  // Optional for compatibility with TopicStat
+  topic: string
+  category: string
+  grade: string
+  progress: number
+  dueCount: number
 }

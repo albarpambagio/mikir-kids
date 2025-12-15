@@ -1,64 +1,123 @@
+
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Search } from "lucide-react"
 import { Logo } from "@/components/layout/Logo"
 import { NavigationMenu } from "@/components/layout/NavigationMenu"
 import { UserProfile } from "@/components/layout/UserProfile"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import type { Topic } from "@/types/topics"
 
-// Mock data
-const mockTopics: Topic[] = [
+// Mastery data types
+interface MasteryDot {
+  id: string
+  subtopicIndex: number
+  questionIndex: number  // 0-27 (28 dots total)
+  status: 'not_started' | 'in_progress' | 'mastered'
+  questionId: string
+}
+
+interface MasteryCategory {
+  id: string
+  name: string
+  grade: string
+  subtopics: string[]  // 5 subtopic names
+  dots: MasteryDot[]   // 140 dots total (5 cols × 28 dots)
+}
+
+// Helper function to generate consistent dots for a category (7 rows x 4 cols = 28 dots)
+function generateDots(categoryId: string, pattern: 'beginner' | 'intermediate' | 'advanced'): MasteryDot[] {
+  const dots: MasteryDot[] = []
+  let dotId = 0
+
+  // 5 Subtopic Columns
+  for (let col = 0; col < 5; col++) {
+    // 28 Dots per subtopic (ordered by visual grid placement if needed, but linear here is fine)
+    for (let i = 0; i < 28; i++) {
+      let status: 'not_started' | 'in_progress' | 'mastered' = 'not_started'
+
+      if (pattern === 'beginner') {
+        // First column: first 10 progress, second column: first 5 progress
+        if (col === 0) status = i < 10 ? 'in_progress' : 'not_started'
+        else if (col === 1) status = i < 5 ? 'in_progress' : 'not_started'
+      } else if (pattern === 'intermediate') {
+        // First 2 columns mastered
+        if (col < 2) status = 'mastered'
+        else if (col === 2) status = i < 20 ? 'in_progress' : 'not_started'
+        else if (col === 3) status = i < 5 ? 'in_progress' : 'not_started'
+      } else if (pattern === 'advanced') {
+        // First 3 columns mastered
+        if (col < 3) status = 'mastered'
+        else if (col === 3) status = i < 25 ? 'mastered' : 'in_progress'
+        else if (col === 4) status = i === 0 ? 'mastered' : (i < 5 ? 'in_progress' : 'not_started')
+      }
+
+      dots.push({
+        id: `${categoryId} -${col} -${i} `,
+        subtopicIndex: col,
+        questionIndex: i,
+        status,
+        questionId: `q - ${categoryId} -${dotId++} `
+      })
+    }
+  }
+
+  return dots
+}
+
+// Mock mastery data
+const masteryData: MasteryCategory[] = [
   {
-    id: "1",
-    name: "Persamaan Linear",
-    category: "Aljabar",
+    id: "aljabar-7",
+    name: "Aljabar",
     grade: "SMP - Kelas 7",
-    totalQuestions: 20,
-    masteryLevel: 80,
-    questionsDue: 0,
-    status: "in_progress"
+    subtopics: ["Subtopik", "Subtopik", "Subtopik", "Subtopik", "Subtopik"],
+    dots: generateDots("aljabar-7", "beginner")
   },
   {
-    id: "2",
-    name: "Persamaan Linear",
-    category: "Aljabar",
+    id: "geometri-7",
+    name: "Geometri",
     grade: "SMP - Kelas 7",
-    totalQuestions: 20,
-    masteryLevel: 80,
-    questionsDue: 2,
-    status: "needs_review"
+    subtopics: ["Subtopik", "Subtopik", "Subtopik", "Subtopik", "Subtopik"],
+    dots: generateDots("geometri-7", "intermediate")
   },
   {
-    id: "3",
-    name: "Persamaan Linear",
-    category: "Aljabar",
+    id: "aljabar-8",
+    name: "Aljabar",
+    grade: "SMP - Kelas 8",
+    subtopics: ["Subtopik", "Subtopik", "Subtopik", "Subtopik", "Subtopik"],
+    dots: generateDots("aljabar-8", "advanced")
+  },
+  {
+    id: "bilangan-7",
+    name: "Bilangan",
     grade: "SMP - Kelas 7",
-    totalQuestions: 20,
-    masteryLevel: 80,
-    questionsDue: 0,
-    status: "in_progress"
+    subtopics: ["Subtopik", "Subtopik", "Subtopik", "Subtopik", "Subtopik"],
+    dots: generateDots("bilangan-7", "intermediate")
   }
 ]
 
 export function Topics() {
-  const navigate = useNavigate()
-  const [searchQuery, setSearchQuery] = useState("")
   const [gradeFilter, setGradeFilter] = useState("all")
-  const [categoryFilter, setCategoryFilter] = useState("all")
 
-  const handleTopicClick = (topicId: string) => {
-    navigate(`/practice/${topicId}`)
+  // Filter categories by grade
+  const filteredCategories = masteryData.filter(category => {
+    if (gradeFilter === "all") return true
+    return category.grade === gradeFilter
+  })
+
+  const handleDotClick = (category: string, dot: MasteryDot) => {
+    console.log(`Clicked ${category} - ${dot.questionId} (${dot.status})`)
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative">
+      {/* Vertical Dashed Line */}
+      <div
+        className="fixed top-0 bottom-0 left-0 lg:left-[116px] w-px border-l border-dashed border-[#94a3b8]"
+        style={{ zIndex: 0 }}
+      />
+
       {/* Header */}
-      <header className="border-b border-dashed border-[#94a3b8]">
+      <header className="border-b border-dashed border-[#94a3b8]" style={{ position: 'relative', zIndex: 1 }}>
         <div className="px-6 lg:pl-[140px] lg:pr-[116px] py-4 flex items-center gap-6">
           <Logo />
           <NavigationMenu />
@@ -68,138 +127,130 @@ export function Topics() {
       </header>
 
       {/* Main Content */}
-      <main className="px-6 lg:px-[116px] py-8">
+      <main className="px-6 lg:pl-[140px] lg:pr-[116px] py-8" style={{ position: 'relative', zIndex: 1 }}>
         {/* Page Title */}
         <h1 className="text-[40px] font-semibold tracking-[0.2px] text-[#3f3f46] mb-8">
           Katalog Topik
         </h1>
 
-        {/* Filters and Search */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 mb-8">
+        {/* Filters Row: Legend (Left) - Grade (Right) */}
+        <div className="flex items-center justify-between mb-8">
+          {/* Mastery Legend */}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-[17px] h-[17px] rounded-full border border-[#cbd5e1] bg-white" />
+              <span className="text-[14px] font-light tracking-[0.07px] text-[#4b5563]">
+                Belum dikuasai
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className="w-[17px] h-[17px] rounded-full border border-[#FFA41A]"
+                style={{ background: 'linear-gradient(to right, #FFA41A 50%, white 50%)' }}
+              />
+              <span className="text-[14px] font-light tracking-[0.07px] text-[#4b5563]">
+                Dalam progress
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-[17px] h-[17px] rounded-full bg-[#FFA41A]" />
+              <span className="text-[14px] font-light tracking-[0.07px] text-[#4b5563]">
+                Dikuasai
+              </span>
+            </div>
+          </div>
+
           {/* Grade Filter */}
           <Select value={gradeFilter} onValueChange={setGradeFilter}>
-            <SelectTrigger className="w-full lg:w-[190px] h-[56px] rounded-[10px] border-[#cbd5e1]">
+            <SelectTrigger className="w-[190px] h-[44px] rounded-[8px] border-[#cbd5e1] text-[#4b5563]">
               <SelectValue placeholder="Kelas" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Kelas</SelectItem>
-              <SelectItem value="smp-7">SMP - Kelas 7</SelectItem>
-              <SelectItem value="smp-8">SMP - Kelas 8</SelectItem>
-              <SelectItem value="smp-9">SMP - Kelas 9</SelectItem>
+              <SelectItem value="SMP - Kelas 7">SMP - Kelas 7</SelectItem>
+              <SelectItem value="SMP - Kelas 8">SMP - Kelas 8</SelectItem>
+              <SelectItem value="SMP - Kelas 9">SMP - Kelas 9</SelectItem>
             </SelectContent>
           </Select>
-
-          {/* Category Filter */}
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-full lg:w-[190px] h-[56px] rounded-[10px] border-[#cbd5e1]">
-              <SelectValue placeholder="Topik" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Topik</SelectItem>
-              <SelectItem value="aljabar">Aljabar</SelectItem>
-              <SelectItem value="geometri">Geometri</SelectItem>
-              <SelectItem value="bilangan">Bilangan</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Sort Button */}
-          <button className="w-[45px] h-[45px] flex items-center justify-center hover:bg-gray-50 rounded-lg transition-colors duration-150">
-            <img src="/assets/icons/sort.svg" alt="Sort" className="w-6 h-6" />
-          </button>
-
-          <div className="flex-1" />
-
-          {/* Search */}
-          <div className="relative w-full lg:w-[400px]">
-            <Input
-              type="text"
-              placeholder="Cari topik"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-[56px] pl-4 pr-12 rounded-[10px] border-[#cbd5e1] text-[15px] font-light tracking-[0.07px] text-[#4b5563]"
-            />
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-[#475569]" />
-          </div>
         </div>
 
-        {/* Topics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockTopics.map((topic) => (
-            <TopicCard
-              key={topic.id}
-              topic={topic}
-              onClick={() => handleTopicClick(topic.id)}
-            />
-          ))}
+        {/* Mastery Categories */}
+        <div className="space-y-6">
+          {filteredCategories.length > 0 ? (
+            filteredCategories.map((category) => (
+              <div
+                key={category.id}
+                className="bg-white border border-[#cbd5e1] rounded-[20px] p-8 shadow-sm"
+              >
+                {/* Category Header with Inline Badge */}
+                <div className="flex items-center gap-4 mb-8">
+                  <h2 className="text-[24px] font-semibold tracking-[0.12px] text-[#404040]">
+                    {category.name}
+                  </h2>
+                  <Badge
+                    variant="grade"
+                    size="sm"
+                  >
+                    {category.grade}
+                  </Badge>
+                </div>
+
+                {/* Subtopic Columns */}
+                <div className="flex justify-between gap-4">
+                  {[0, 1, 2, 3, 4].map((colIndex) => (
+                    <div key={colIndex} className="flex flex-col gap-4 w-[160px]">
+                      {/* Subtopic label */}
+                      <p className="text-[12px] font-semibold tracking-[1.5px] text-[#737373] uppercase">
+                        {category.subtopics[colIndex]}
+                      </p>
+
+                      {/* 7x4 Dot Grid (7 columns, 4 rows) */}
+                      <div className="grid grid-cols-7 gap-2">
+                        {[...Array(28)].map((_, i) => {
+                          const dot = category.dots.find(
+                            d => d.subtopicIndex === colIndex && d.questionIndex === i
+                          )
+
+                          if (!dot) return null
+
+                          let dotClass = "w-[17px] h-[17px] rounded-full cursor-pointer transition-all duration-150 hover:scale-125"
+
+                          if (dot.status === 'not_started') {
+                            dotClass += " border border-[#cbd5e1] bg-white hover:border-[#94a3b8]"
+                          } else if (dot.status === 'in_progress') {
+                            // Half-filled with orange primary color
+                            dotClass += " border border-[#FFA41A]"
+                          } else if (dot.status === 'mastered') {
+                            dotClass += " bg-[#FFA41A] hover:bg-[#ff9a00]"
+                          }
+
+                          return (
+                            <div
+                              key={i}
+                              className={dotClass}
+                              style={dot.status === 'in_progress' ? {
+                                background: 'linear-gradient(to right, #FFA41A 50%, white 50%)'
+                              } : undefined}
+                              onClick={() => handleDotClick(category.name, dot)}
+                              title={`${category.name} - Q${i + 1} (${dot.status})`}
+                            />
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-[18px] font-light tracking-[0.09px] text-[#4b5563]">
+                Tidak ada kategori yang sesuai dengan filter
+              </p>
+            </div>
+          )}
         </div>
       </main>
-    </div>
-  )
-}
-
-interface TopicCardProps {
-  topic: Topic
-  onClick: () => void
-}
-
-function TopicCard({ topic, onClick }: TopicCardProps) {
-  const hasReview = topic.questionsDue > 0
-
-  return (
-    <div className="border border-[#cbd5e1] rounded-[20px] p-6 hover:border-[#94a3b8] transition-colors duration-150">
-      {/* Header */}
-      <div className="mb-4">
-        <div className="flex items-center gap-2 mb-2">
-          <p className="text-[15px] font-light tracking-[0.07px] text-[#4b5563]">
-            {topic.category}
-          </p>
-          <Badge variant="grade" size="sm">
-            {topic.grade}
-          </Badge>
-          <Badge variant="grade" size="sm">
-            {topic.totalQuestions} Soal
-          </Badge>
-        </div>
-        <h3 className="text-[24px] font-semibold tracking-[0.12px] text-[#404040] leading-tight">
-          {topic.name}
-        </h3>
-      </div>
-
-      {/* Progress */}
-      <div className="mb-4">
-        <Progress value={topic.masteryLevel} className="h-2 mb-2" />
-        <p className="text-[15px] font-light tracking-[0.07px] text-[#4b5563]">
-          {topic.masteryLevel}%
-        </p>
-      </div>
-
-      {/* Action */}
-      <div className="flex items-center justify-between">
-        {hasReview ? (
-          <>
-            <Badge variant="review" size="pill">
-              Perlu Review: {topic.questionsDue} Soal
-            </Badge>
-            <Button
-              onClick={onClick}
-              className="bg-[#FFA41A] hover:bg-[#ff9a00] text-white text-[14px] font-bold tracking-[0.07px] h-[36px] px-6 rounded-[8px]"
-            >
-              Mulai Review
-            </Button>
-          </>
-        ) : (
-          <>
-            <div />
-            <Button
-              onClick={onClick}
-              variant="outline"
-              className="text-[#020617] border-[#cbd5e1] hover:bg-slate-50 text-[14px] font-semibold tracking-[0.07px] h-[36px] px-6 rounded-[8px]"
-            >
-              Latihan
-            </Button>
-          </>
-        )}
-      </div>
     </div>
   )
 }

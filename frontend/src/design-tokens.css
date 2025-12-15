@@ -161,6 +161,12 @@
     --shadow-sm:
         0px 1px 2px -1px var(--shadow-sm-color),
         0px 1px 3px 0px var(--shadow-sm-color);
+
+    /* Shadow MD - Medium shadow for cards */
+    --shadow-md-color: #0000001a;
+    --shadow-md:
+        0px 4px 6px -1px var(--shadow-md-color),
+        0px 2px 4px -2px var(--shadow-md-color);
 }
 
 /* ============================================================
@@ -176,15 +182,27 @@
     letter-spacing: var(--paragraph-mini-letter-spacing);
 }
 
+.paragraph-mini-medium {
+    font-family: var(--font-family-body);
+    font-size: var(--paragraph-mini-font-size);
+    font-weight: 500;
+    line-height: var(--paragraph-mini-line-height);
+    letter-spacing: 1.5px;
+}
+
 .paragraph-small-bold {
     font-family: var(--font-family-body);
     font-size: var(--paragraph-small-font-size);
     font-weight: var(--paragraph-small-font-weight-bold);
     line-height: var(--paragraph-small-line-height);
-    letter-spacing: var(--paragraph-small-letter-spacing);
+    letter-spacing: 0.5px;
 }
 
-/* Shadow Utility */
+/* Shadow Utilities */
 .shadow-sm-figma {
     box-shadow: var(--shadow-sm);
+}
+
+.shadow-md-figma {
+    box-shadow: var(--shadow-md);
 }

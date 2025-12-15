@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ArrowUp, Clock, Wrench, ClipboardList, Trophy, AlertCircle } from "lucide-react"
+import { ArrowUp, Clock, Wrench, ClipboardList, Trophy, AlertCircle, ArrowRight } from "lucide-react"
 import { Logo } from "@/components/layout/Logo"
 import { NavigationMenu } from "@/components/layout/NavigationMenu"
 import { UserProfile } from "@/components/layout/UserProfile"
@@ -18,22 +18,30 @@ const stats = {
   masteryChange: 5
 }
 
-const priorities = [
+const recommendations = [
   {
     id: "1",
-    number: 1,
-    name: "Analisis Bayesian",
-    status: "Perlu Review: 5 Soal",
-    estimatedTime: "Est. 5 menit",
-    action: "review" as const
+    type: "review" as const,
+    topicName: "Persamaan Linear",
+    description: "Tingkatkan retensi sebelum lupa",
+    badge: "Perlu Review: 2 Soal",
+    questionsCount: 2
   },
   {
     id: "2",
-    number: 2,
-    name: "Geometri",
-    status: "Perlu Latihan: 2 Soal",
-    estimatedTime: "Est. 3 menit",
-    action: "practice" as const
+    type: "practice" as const,
+    topicName: "Geometri",
+    description: "Perluas penguasaan materi",
+    badge: "Soal Baru: 2 Soal",
+    questionsCount: 2
+  },
+  {
+    id: "3",
+    type: "practice" as const,
+    topicName: "Trigonometri",
+    description: "Perluas penguasaan materi",
+    badge: "Soal Baru: 2 Soal",
+    questionsCount: 2
   }
 ]
 
@@ -64,6 +72,62 @@ const topics = [
     totalQuestions: 15,
     name: "Segitiga",
     masteryLevel: 45,
+    status: "practice" as const
+  },
+  {
+    id: "4",
+    category: "Bilangan",
+    grade: "SMP - Kelas 8",
+    totalQuestions: 25,
+    name: "Bilangan Berpangkat",
+    masteryLevel: 35,
+    status: "review" as const,
+    questionsDue: 3
+  },
+  {
+    id: "5",
+    category: "Statistika",
+    grade: "SMP - Kelas 9",
+    totalQuestions: 18,
+    name: "Mean, Median, Modus",
+    masteryLevel: 90,
+    status: "practice" as const
+  },
+  {
+    id: "6",
+    category: "Geometri",
+    grade: "SMP - Kelas 8",
+    totalQuestions: 22,
+    name: "Lingkaran",
+    masteryLevel: 55,
+    status: "practice" as const
+  },
+  {
+    id: "7",
+    category: "Aljabar",
+    grade: "SMP - Kelas 9",
+    totalQuestions: 30,
+    name: "Fungsi Kuadrat",
+    masteryLevel: 25,
+    status: "review" as const,
+    questionsDue: 5
+  },
+  {
+    id: "8",
+    category: "Bilangan",
+    grade: "SMP - Kelas 7",
+    totalQuestions: 16,
+    name: "Pecahan",
+    masteryLevel: 95,
+    status: "practice" as const
+  },
+  {
+    id: "9",
+    category: "Geometri",
+    grade: "SMP - Kelas 9",
+    totalQuestions: 20,
+    name: "Bangun Ruang",
+    masteryLevel: 70,
     status: "practice" as const
   }
 ]
@@ -167,6 +231,10 @@ export function EnhancedDashboard() {
   const [hasError, setHasError] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
 
+  // Filter and sort state
+  const [gradeFilter, setGradeFilter] = useState("all")
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+
   const handleReviewClick = () => {
     console.log("Navigate to review questions")
     // TODO: Navigate to practice session with due questions
@@ -188,6 +256,23 @@ export function EnhancedDashboard() {
     if (level >= 80) return "✓ Dikuasai"
     if (level >= 50) return "Dalam Progress"
     return "Perlu Latihan"
+  }
+
+  // Filter topics by grade
+  const filteredTopics = topics.filter(topic => {
+    if (gradeFilter === "all") return true
+    return topic.grade === gradeFilter
+  })
+
+  // Sort topics by mastery level
+  const sortedTopics = [...filteredTopics].sort((a, b) => {
+    return sortDirection === 'desc'
+      ? b.masteryLevel - a.masteryLevel
+      : a.masteryLevel - b.masteryLevel
+  })
+
+  const handleSortClick = () => {
+    setSortDirection(prev => prev === 'desc' ? 'asc' : 'desc')
   }
 
   return (
@@ -354,66 +439,111 @@ export function EnhancedDashboard() {
                 )}
               </div>
 
-              {/* Priorities Section */}
-              <div className="bg-[#fff3ea] rounded-[20px] p-6 mb-8">
+              {/* Horizontal Separator */}
+              <div className="-mx-6 lg:-mx-[116px] border-t border-dashed border-[#94a3b8] my-8" style={{ position: 'relative', zIndex: 1 }} />
+
+              {/* Recommendations Section */}
+              <div className="mb-8">
+                {/* Header - Outside orange card */}
                 <h2 className="text-[40px] font-semibold tracking-[0.2px] text-[#3f3f46] mb-6">
-                  Prioritas
+                  🧭 Rekomendasi berdasarkan pola belajar
                 </h2>
-                <div className="space-y-4">
-                  {priorities.map((priority) => (
-                    <div
-                      key={priority.id}
-                      className="bg-white rounded-[20px] p-6 flex items-center gap-6"
-                    >
-                      <div className="w-[38px] h-[38px] rounded-full border-2 border-[#f37677] flex items-center justify-center flex-shrink-0">
-                        <span className="text-[20px] font-bold tracking-[0.1px] text-[#f37677]">
-                          {priority.number}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <Badge variant={priority.action === "review" ? "review" : "practice"} size="pill" className="mb-2">
-                          {priority.status}
-                        </Badge>
-                        <h3 className="text-[20px] font-medium tracking-[0.1px] text-black truncate">
-                          {priority.name}
-                        </h3>
-                      </div>
-                      <p className="text-[15px] font-light tracking-[0.07px] text-[#4b5563] flex-shrink-0">
-                        {priority.estimatedTime}
-                      </p>
-                      <Button
-                        variant={priority.action === "review" ? "default" : "outline"}
-                        className={
-                          priority.action === "review"
-                            ? "bg-[#FFA41A] hover:bg-[#ff9a00] text-white text-[14px] font-bold tracking-[0.07px] h-[36px] px-6 rounded-[8px] flex-shrink-0 focus:ring-2 focus:ring-[#FFA41A] focus:ring-offset-2"
-                            : "text-[#020617] border-[#cbd5e1] hover:bg-slate-50 text-[14px] font-semibold tracking-[0.07px] h-[36px] px-6 rounded-[8px] flex-shrink-0 focus:ring-2 focus:ring-[#cbd5e1] focus:ring-offset-2"
-                        }
+
+                {/* Orange Card - Contains scrolling cards + button */}
+                <div className="bg-[#FFF3EA] rounded-[20px] py-4 px-6 flex items-center gap-6">
+                  {/* Horizontal scroll container */}
+                  <div className="flex-1 flex items-center gap-6 overflow-x-auto pb-4 -mx-6 px-6 scrollbar-hide">
+                    {recommendations.map((rec) => (
+                      <div
+                        key={rec.id}
+                        className="bg-white rounded-[25px] p-6 flex-shrink-0 w-[371px] h-[257px] flex flex-col hover:border-[#94a3b8] transition-all duration-200 cursor-pointer"
+                        style={{
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.10), 0 2px 4px -2px rgba(0, 0, 0, 0.10)'
+                        }}
+                        onClick={() => console.log(`Start ${rec.type} for ${rec.topicName}`)}
                       >
-                        {priority.action === "review" ? "Mulai Review" : "Latihan"}
-                      </Button>
-                    </div>
-                  ))}
+                        {/* Type label */}
+                        <p className="text-[16px] font-normal tracking-[0.08px] text-[#404040] mb-2">
+                          {rec.type === "review" ? "Review" : "Latihan"}
+                        </p>
+
+                        {/* Topic name */}
+                        <h3 className="text-[36px] font-semibold leading-[32px] tracking-[0.18px] text-[#404040] mb-2">
+                          {rec.topicName}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-[14px] font-light tracking-[0.07px] text-[#737373] mb-4">
+                          {rec.description}
+                        </p>
+
+                        {/* Badge - positioned at bottom */}
+                        <div className="mt-auto">
+                          <Badge
+                            variant={rec.type === "review" ? "review" : "default"}
+                            size="pill"
+                          >
+                            {rec.badge}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Mulai Kerjakan Button - Right side */}
+                  <button
+                    onClick={() => console.log('Mulai kerjakan all recommendations')}
+                    className="inline-flex min-h-[36px] px-4 py-[7.5px] justify-center items-center gap-2 text-[#FFA41A] hover:text-[#ff9a00] text-[16px] font-bold tracking-[0.08px] transition-colors duration-150 flex-shrink-0"
+                  >
+                    Mulai Kerjakan
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
-
-              {/* Horizontal Separator */}
-              <div className="-mx-6 lg:-mx-[116px] border-b border-dashed border-[#94a3b8] mb-8" style={{ position: 'relative', zIndex: 1 }} />
+              {/* End Recommendations Section */}
 
               {/* Topics Section */}
               <div>
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-[40px] font-semibold tracking-[0.2px] text-[#3f3f46]">
-                    Peta penguasaan materi
-                  </h2>
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-[40px] font-semibold tracking-[0.2px] text-[#3f3f46]">
+                      🗺️ Peta penguasaan materi
+                    </h2>
+                    {/* Class Filter - From Figma Design */}
+                    <div className="relative">
+                      <select
+                        value={gradeFilter}
+                        onChange={(e) => setGradeFilter(e.target.value)}
+                        className="appearance-none bg-white border border-[#cbd5e1] rounded-[10px] px-4 py-2 pr-10 text-[15px] font-light tracking-[0.07px] text-[#4b5563] cursor-pointer hover:border-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#FFA41A] focus:ring-offset-2 transition-colors duration-150"
+                      >
+                        <option value="all">Semua Kelas</option>
+                        <option value="SMP - Kelas 7">SMP - Kelas 7</option>
+                        <option value="SMP - Kelas 8">SMP - Kelas 8</option>
+                        <option value="SMP - Kelas 9">SMP - Kelas 9</option>
+                      </select>
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                          <path d="M5 7.5L10 12.5L15 7.5" stroke="#475569" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
                   {/* Sort Icon Inline */}
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button className="w-[45px] h-[45px] flex items-center justify-center hover:bg-gray-50 rounded-lg transition-colors duration-150 bg-white focus:outline-none focus:ring-2 focus:ring-[#FFA41A] focus:ring-offset-2">
-                        <img src="/assets/icons/sort.svg" alt="Sort" className="w-6 h-6" />
+                      <button
+                        onClick={handleSortClick}
+                        className="w-[45px] h-[45px] flex items-center justify-center hover:bg-gray-50 rounded-lg transition-colors duration-150 bg-white focus:outline-none focus:ring-2 focus:ring-[#FFA41A] focus:ring-offset-2"
+                      >
+                        <img
+                          src="/assets/icons/sort.svg"
+                          alt="Sort"
+                          className={`w-6 h-6 transition-transform duration-200 ${sortDirection === 'asc' ? 'rotate-180' : ''}`}
+                        />
                       </button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Urutkan berdasarkan tingkat penguasaan</p>
+                      <p>Urutkan berdasarkan tingkat penguasaan ({sortDirection === 'desc' ? 'Tinggi → Rendah' : 'Rendah → Tinggi'})</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
@@ -427,7 +557,7 @@ export function EnhancedDashboard() {
                       <TopicCardSkeleton />
                     </>
                   ) : (
-                    topics.map((topic) => (
+                    sortedTopics.map((topic) => (
                       <div key={topic.id} className="bg-white border border-[#cbd5e1] rounded-[20px] p-6">
                         <div className="mb-4">
                           <div className="flex items-center gap-2 mb-2">

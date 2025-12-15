@@ -76,12 +76,12 @@ export function PracticeSession() {
     }
   };
 
-  const handleQuestionNavigate = (index: number) => {
+  const handleQuestionNavigate = (_index: number) => {
     // Optional: Allow jumping to specific question
   };
 
   // Calculate next review time based on FSRS (simplified for mock)
-  const getNextReviewTime = (isCorrect: boolean, confidence: ConfidenceLevel | null): string => {
+  const getNextReviewTime = (isCorrect: boolean, _confidence: ConfidenceLevel | null): string => {
     if (isCorrect) return '';
 
     // For incorrect answers (Rating.Again), typical FSRS intervals:
