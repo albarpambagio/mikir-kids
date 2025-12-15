@@ -128,10 +128,7 @@ export function Topics() {
 
       {/* Main Content */}
       <main className="px-6 lg:pl-[140px] lg:pr-[116px] py-8" style={{ position: 'relative', zIndex: 1 }}>
-        {/* Page Title */}
-        <h1 className="text-[40px] font-semibold tracking-[0.2px] text-[#3f3f46] mb-8">
-          Katalog Topik
-        </h1>
+
 
         {/* Filters Row: Legend (Left) - Grade (Right) */}
         <div className="flex items-center justify-between mb-8">
